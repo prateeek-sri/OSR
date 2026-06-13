@@ -11,6 +11,7 @@ import type {
   RecommendedIssue,
   CoachingBlueprint,
   Milestone,
+  TechnicalProficiency,
 } from "./types";
 
 // ─────────────────────────────────────────────
