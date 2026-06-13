@@ -26,7 +26,7 @@ import { useRouter } from "next/navigation";
 import { useAppState } from "./Providers";
 import type { GlobalState, PipelineStep } from "@/lib/types";
 import HeroGeometric from "./HeroGeometric";
-import DitherBackground from "./DitherBackground";
+import { DitherGradient } from "./ui/dither-gradient";
 
 const NAV_STEPS = [
   { id: "skills", label: "Profile" },
@@ -277,8 +277,8 @@ export default function Dashboard() {
     <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Sidebar */}
       <aside style={{ width: "260px", position: "relative", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB", zIndex: 10 }}>
-        <DitherBackground opacity={0.12} color="#F4F5F8" />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", zIndex: -1 }} />
+        <DitherGradient colorFrom="#FAFAFA" colorTo="#FAFAFA" colorMid="#FAFAFA" intensity={0.08} speed={0} className="absolute inset-0 z-0" />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", zIndex: 0 }} />
         
         {/* Logo Area */}
         <div style={{ position: "relative", height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent", zIndex: 1 }}>
