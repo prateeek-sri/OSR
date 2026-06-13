@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useAppState } from "./Providers";
 import type { GlobalState, PipelineStep } from "@/lib/types";
 import HeroGeometric from "./HeroGeometric";
+import DitherBackground from "./DitherBackground";
 
 const NAV_STEPS = [
   { id: "skills", label: "Profile" },
@@ -275,44 +276,47 @@ export default function Dashboard() {
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Sidebar */}
-      <aside style={{ width: "260px", background: "#FAFAFA", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB", zIndex: 10 }}>
+      <aside style={{ width: "260px", position: "relative", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB", zIndex: 10 }}>
+        <DitherBackground opacity={0.12} color="#F4F5F8" />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", zIndex: -1 }} />
+        
         {/* Logo Area */}
-        <div style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent" }}>
+        <div style={{ position: "relative", height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent", zIndex: 1 }}>
           <div onClick={() => window.location.href = '/'} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
             IDR
           </div>
         </div>
 
-        {/* Setup Progress Widget */}
-        <div style={{ padding: "16px 20px", marginBottom: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", border: "1px solid #E5E7EB", background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
-             <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: "2px solid #8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem", fontWeight: 700, color: "#8B5CF6" }}>
-               {state?.dynamic_roadmap ? "4" : state?.remediation_strategy ? "3" : state ? "2" : "1"}
-             </div>
-             <div>
-               <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827" }}>Setup Progress</div>
-               <div style={{ fontSize: "0.7rem", color: "#6B7280", fontWeight: 500 }}>{state?.dynamic_roadmap ? "Roadmap ready!" : "Build your profile"}</div>
-             </div>
+        {/* Sidebar Content Wrapper */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1 }}>
+          {/* Setup Progress Widget */}
+          <div style={{ padding: "16px 20px", marginBottom: "8px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", border: "1px solid #E5E7EB", background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
+               <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: "2px solid #8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem", fontWeight: 700, color: "#8B5CF6" }}>
+                 {state?.dynamic_roadmap ? "4" : state?.remediation_strategy ? "3" : state ? "2" : "1"}
+               </div>
+               <div>
+                 <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827" }}>Setup Progress</div>
+                 <div style={{ fontSize: "0.7rem", color: "#6B7280", fontWeight: 500 }}>{state?.dynamic_roadmap ? "Roadmap ready!" : "Build your profile"}</div>
+               </div>
+            </div>
           </div>
-        </div>
 
-        {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "2px" }}>
-           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
-           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => { if (state?.remediation_strategy) setView("overview"); }} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
-           <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
-              if (!session) { setIsLoginModalOpen(true); return; }
-              if (state) setView("opensource");
-           }} disabled={!state} icon={<Search size={16}/>} iconBg="#F3E8FF" iconColor="#8B5CF6" />
-           <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
-              if (!session) { setIsLoginModalOpen(true); return; }
-              if (state?.dynamic_roadmap) setView("roadmap");
-           }} disabled={!state?.dynamic_roadmap} icon={<Map size={16}/>} iconBg="#E0F2FE" iconColor="#0EA5E9" />
-           
-           <div style={{ marginTop: "24px", marginBottom: "8px", paddingLeft: "12px", fontSize: "0.75rem", color: "#9CA3AF", fontWeight: 600 }}>Preferences</div>
-           <SidebarLink active={false} text="Settings" disabled={true} icon={<Settings size={16}/>} iconBg="#F3F4F6" iconColor="#6B7280" />
-        </nav>
+          {/* Navigation Links */}
+          <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "2px" }}>
+             <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
+             <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => { if (state?.remediation_strategy) setView("overview"); }} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
+             <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
+                if (!session) { setIsLoginModalOpen(true); return; }
+                if (state) setView("opensource");
+             }} disabled={!state} icon={<Search size={16}/>} iconBg="#F3E8FF" iconColor="#8B5CF6" />
+             <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
+                if (!session) { setIsLoginModalOpen(true); return; }
+                if (state?.dynamic_roadmap) setView("roadmap");
+             }} disabled={!state?.dynamic_roadmap} icon={<Map size={16}/>} iconBg="#E0F2FE" iconColor="#0EA5E9" />
+          </nav>
+        </div>
       </aside>
 
       {/* Main Column */}
