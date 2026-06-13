@@ -427,159 +427,144 @@ export default function Dashboard() {
 
 
 
-      {/* ═══ SKILLS VIEW ═══ */}
+      {/* ═══ SKILLS VIEW (Profile Setup) ═══ */}
       {view === "skills" && state && !isRunning && (
-        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1000px" }}>
+        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1000px", margin: "0 auto" }}>
           
-          {/* Top Card: Profile & Languages */}
-          <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid var(--border)", padding: "32px", boxShadow: "var(--shadow-sm)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "32px" }}>
+          {/* Top Row: User Profile & Language Breakdown */}
+          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+            
+            {/* User Profile Card */}
+            <div style={{ flex: "1 1 400px", background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", alignItems: "center", gap: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
               {state.raw_github_metadata.profile?.avatar_url ? (
-                <img src={state.raw_github_metadata.profile.avatar_url} style={{ width: 80, height: 80, borderRadius: "20px" }} alt="Avatar" />
+                <img src={state.raw_github_metadata.profile.avatar_url} style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover" }} alt="Avatar" />
               ) : (
-                <div style={{ width: 80, height: 80, borderRadius: "20px", background: "var(--bg-elevated)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                   <User size={32} color="var(--text-muted)" />
+                <div style={{ width: 96, height: 96, borderRadius: "50%", background: "#F3F4F6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                   <User size={40} color="#9CA3AF" />
                 </div>
               )}
-              <div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "12px", color: "var(--text-primary)", margin: "0 0 8px 0" }}>
-                  {state.raw_github_metadata.profile?.name || username || githubUsername} 
-                  <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "var(--text-muted)", background: "var(--bg-primary)", padding: "4px 12px", borderRadius: "20px" }}>
-                    &lt;/&gt; {username || githubUsername}
-                  </span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                <h2 style={{ fontSize: "1.6rem", fontWeight: 700, color: "#111827", margin: 0, letterSpacing: "-0.5px" }}>
+                  {state.raw_github_metadata.profile?.name || username || githubUsername}
                 </h2>
-                <p style={{ color: "var(--text-secondary)", margin: 0 }}>
-                  {state.raw_github_metadata.profile?.bio || "Software Engineer focused on building great products."}
+                <p style={{ color: "#4B5563", margin: "4px 0 12px 0", fontSize: "0.95rem", lineHeight: 1.4 }}>
+                  {state.raw_github_metadata.profile?.bio || "Full-stack developer. Passionate about cloud & open source."}
                 </p>
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: "24px", marginBottom: "32px", flexWrap: "wrap" }}>
-              <div style={{ flex: 1, minWidth: "150px", padding: "20px", border: "1px solid var(--border)", borderRadius: "12px", background: "var(--bg-primary)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", marginBottom: "8px" }}><User size={16}/></div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>{state.raw_github_metadata.profile?.followers || 0}</div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Followers</div>
-              </div>
-              <div style={{ flex: 1, minWidth: "150px", padding: "20px", border: "1px solid var(--border)", borderRadius: "12px", background: "var(--bg-primary)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", marginBottom: "8px" }}><BookOpen size={16}/></div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>{state.raw_github_metadata.profile?.public_repos || state.raw_github_metadata.repositories.length}</div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Repos</div>
-              </div>
-              <div style={{ flex: 1, minWidth: "150px", padding: "20px", border: "1px solid var(--border)", borderRadius: "12px", background: "var(--bg-primary)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "var(--text-muted)", marginBottom: "8px" }}><GitBranch size={16}/></div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--text-primary)" }}>
-                  {state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832}
+                <div style={{ display: "flex", gap: "12px", color: "#9CA3AF" }}>
+                  {/* Icons */}
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
                 </div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Contributions</div>
               </div>
             </div>
 
-            {/* Language Breakdown */}
-            <div>
-              <div style={{ fontSize: "0.8rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", color: "var(--text-muted)", marginBottom: "16px" }}>Language Breakdown</div>
-              <div style={{ display: "flex", width: "100%", height: "12px", borderRadius: "6px", overflow: "hidden", marginBottom: "16px" }}>
+            {/* Language Breakdown Card */}
+            <div style={{ flex: "1 1 400px", background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 24px 0" }}>Language Breakdown</h3>
+              
+              <div style={{ display: "flex", gap: "12px", width: "100%" }}>
                 {Object.entries(state.raw_github_metadata.languages).length > 0 ? (
                   Object.entries(state.raw_github_metadata.languages)
                     .sort((a, b) => b[1] - a[1])
                     .slice(0, 4)
                     .map(([name, bytes], i) => {
                       const totalBytes = Object.values(state.raw_github_metadata.languages).reduce((a, b) => a + b, 0);
-                      const percent = (bytes / totalBytes) * 100;
-                      const colors = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6"];
-                      return <div key={name} style={{ width: `${percent}%`, height: "100%", background: colors[i % colors.length] }} />;
+                      const percent = Math.round((bytes / totalBytes) * 100);
+                      const colors = ["#2563EB", "#10B981", "#8B5CF6", "#9CA3AF"];
+                      const color = colors[i % colors.length];
+                      return (
+                        <div key={name} style={{ flex: bytes, display: "flex", flexDirection: "column", gap: "8px" }}>
+                          <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827" }}>{name}</div>
+                          <div style={{ width: "100%", height: "8px", borderRadius: "4px", background: color }} />
+                          <div style={{ fontSize: "0.85rem", color: "#6B7280" }}>{percent}%</div>
+                        </div>
+                      );
                     })
                 ) : (
-                  <div style={{ width: "100%", height: "100%", background: "var(--border)" }} />
+                  <div style={{ width: "100%", height: "8px", borderRadius: "4px", background: "#E5E7EB" }} />
                 )}
-              </div>
-              <div style={{ display: "flex", gap: "24px", fontSize: "0.85rem", color: "var(--text-secondary)", fontWeight: 500 }}>
-                {Object.entries(state.raw_github_metadata.languages)
-                  .sort((a, b) => b[1] - a[1])
-                  .slice(0, 4)
-                  .map(([name, bytes], i) => {
-                    const totalBytes = Object.values(state.raw_github_metadata.languages).reduce((a, b) => a + b, 0);
-                    const percent = Math.round((bytes / totalBytes) * 100);
-                    const colors = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6"];
-                    return (
-                      <div key={name} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: colors[i % colors.length] }} />
-                        {name} {percent}%
-                      </div>
-                    );
-                  })}
               </div>
             </div>
           </div>
 
-          {/* Bottom Card: Recruitability Score */}
-          <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid var(--border)", padding: "32px", boxShadow: "var(--shadow-sm)" }}>
-             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
-               <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>Recruitability Score</h3>
-               <span style={{ padding: "6px 16px", background: "var(--bg-primary)", color: "var(--text-secondary)", borderRadius: "20px", fontSize: "0.85rem", fontWeight: 600 }}>
-                 ↗ +6 this month
-               </span>
+          {/* Middle Row: Stats */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px" }}>
+            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <User size={24} color="#4B5563" />
+              <div>
+                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Followers</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{state.raw_github_metadata.profile?.followers >= 1000 ? (state.raw_github_metadata.profile?.followers / 1000).toFixed(1) + 'k' : state.raw_github_metadata.profile?.followers || 0}</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <BookOpen size={24} color="#4B5563" />
+              <div>
+                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Repos</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{state.raw_github_metadata.profile?.public_repos || state.raw_github_metadata.repositories.length}</div>
+              </div>
+            </div>
+
+            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              <div>
+                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Contributions</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>
+                  {(state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) >= 1000 ? ((state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Row: Recruitability Score */}
+          <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+             <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 32px 0" }}>Recruitability Score</h3>
+             
+             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "40px" }}>
+               <HalfScoreRing score={state.analysis_results?.employability_index || 0} size={280} strokeWidth={20} />
              </div>
 
-             <div style={{ display: "flex", gap: "48px", alignItems: "center", flexWrap: "wrap" }}>
-               {/* Left: Score Ring */}
-               <div style={{ flexShrink: 0 }}>
-                 <ScoreRing score={state.analysis_results?.employability_index || 0} size={180} strokeWidth={16} darkText />
+             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1rem", fontWeight: 600, color: "#111827" }}>
+                 <span>Code Quality</span>
+                 <span>92% (Green)</span>
                </div>
-               
-               {/* Right: Breakdown */}
-               <div style={{ flex: 1, minWidth: "300px" }}>
-                 <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 4px 0" }}>
-                   {(state.analysis_results?.employability_index || 0) >= 75 ? "Highly Recruitable" : (state.analysis_results?.employability_index || 0) >= 50 ? "Solid Candidate" : "Needs Improvement"}
-                 </h4>
-                 <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", margin: "0 0 24px 0" }}>
-                   You rank in the top {100 - (state.analysis_results?.employability_index || 0)}% of {state.user_context.target_role || "developers"} in your region.
-                 </p>
-
-                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                    {[
-                      { label: "Code Quality", score: Math.min((state.analysis_results?.employability_index || 0) + 6, 100) },
-                      { label: "Activity", score: Math.min((state.analysis_results?.employability_index || 0) - 3, 100) },
-                      { label: "Collaboration", score: Math.min((state.analysis_results?.employability_index || 0) - 8, 100) },
-                      { label: "Project Depth", score: Math.min((state.analysis_results?.employability_index || 0) + 3, 100) }
-                    ].map((item, i) => (
-                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.9rem", fontWeight: 500 }}>
-                          <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                          <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>{item.score}</span>
-                        </div>
-                        <div style={{ width: "100%", height: "6px", background: "var(--bg-primary)", borderRadius: "3px", overflow: "hidden" }}>
-                          <div style={{ width: `${item.score}%`, height: "100%", background: "#111827", borderRadius: "3px" }} />
-                        </div>
-                      </div>
-                    ))}
-                 </div>
+               <div style={{ width: "100%", height: "8px", background: "#E5E7EB", borderRadius: "4px", overflow: "hidden" }}>
+                 <div style={{ width: "92%", height: "100%", background: "#10B981", borderRadius: "4px" }} />
                </div>
              </div>
           </div>
 
-          {/* Gap Finder Form */}
-          <div className="card fade-in fade-in-delay-3" style={{ background: "linear-gradient(135deg, rgba(37,99,235,0.05), rgba(59,130,246,0.02))", border: "1px solid rgba(37,99,235,0.1)" }}>
-             <div className="section-header">
-               <h3 className="section-title"><Briefcase size={18} /> Ready to find your gaps?</h3>
+          {/* Gap Finder Form - Smaller and professional */}
+          <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: "12px", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+             <div>
+               <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: "8px" }}>
+                 <Target size={18} color="#2563EB" /> Find your gaps
+               </h3>
+               <p style={{ fontSize: "0.85rem", color: "#6B7280", margin: 0 }}>
+                 Enter your target role to identify missing skills.
+               </p>
              </div>
-             <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", marginBottom: 16 }}>
-               Enter your target role — our AI Recruiter will identify what&apos;s missing and match you
-               with open-source issues.
-             </p>
-             <form style={{ display: "flex", gap: 12, flexWrap: "wrap" }} onSubmit={(e) => { e.preventDefault(); if (targetRole) runGapAnalysis(); }}>
-               <div className="input-group" style={{ flex: 1, minWidth: 250, background: "#fff" }}>
-                 <Briefcase />
-                 <input id="target-role" className="input-field" type="text"
-                   placeholder="e.g. Full-Stack Developer, Backend Engineer..."
-                   value={targetRole} onChange={(e) => setTargetRole(e.target.value)} style={{ color: "#111" }} />
-               </div>
-               <div style={{ display: "flex", gap: "12px", width: "100%", flexWrap: "wrap" }}>
-                 <button className="btn-primary" onClick={runGapAnalysis} disabled={isRunning} style={{ flex: 1, justifyContent: "center" }}>
-                   <Target size={18} /> Find My Gaps
-                 </button>
-               </div>
+             <form style={{ display: "flex", gap: "12px", flex: "1 1 400px" }} onSubmit={(e) => { e.preventDefault(); if (targetRole) runGapAnalysis(); }}>
+               <input 
+                 id="target-role" 
+                 type="text"
+                 placeholder="e.g. Frontend Developer"
+                 value={targetRole} 
+                 onChange={(e) => setTargetRole(e.target.value)} 
+                 style={{ flex: 1, padding: "10px 16px", borderRadius: "8px", border: "1px solid #D1D5DB", outline: "none", fontSize: "0.95rem", color: "#111827", background: "#FAFAFA" }} 
+               />
+               <button 
+                 onClick={runGapAnalysis} 
+                 disabled={isRunning} 
+                 style={{ background: "#2563EB", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: 600, fontSize: "0.95rem", cursor: "pointer", whiteSpace: "nowrap" }}
+               >
+                 Analyze Gaps
+               </button>
              </form>
           </div>
+
         </div>
       )}
 
@@ -592,7 +577,6 @@ export default function Dashboard() {
           {/* Header Action Bar */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "24px 32px", borderBottom: "1px solid #E5E7EB", borderRadius: "0 0 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <h2 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#111827", letterSpacing: "-0.5px" }}>Gap Analysis Detailed View</h2>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "#ECFDF5", padding: "6px 12px", borderRadius: "16px" }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
                 <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#065F46" }}>Live Analysis</span>
@@ -978,3 +962,29 @@ function ScoreRing({ score, size = 104, strokeWidth = 8, darkText = false }: { s
     </div>
   );
 }
+
+function HalfScoreRing({ score, size = 200, strokeWidth = 20 }: { score: number, size?: number, strokeWidth?: number }) {
+  const radius = (size - strokeWidth) / 2;
+  const center = size / 2;
+  const circumference = Math.PI * radius;
+  const startX = strokeWidth / 2;
+  const startY = size / 2;
+  const endX = size - strokeWidth / 2;
+  const offset = circumference - (score / 100) * circumference;
+  
+  return (
+    <div style={{ width: size, height: size / 2 + 10, position: "relative", display: "flex", justifyContent: "center" }}>
+      <svg width={size} height={size / 2 + strokeWidth / 2}>
+        <path d={`M ${startX},${startY} A ${radius},${radius} 0 0,1 ${endX},${startY}`} fill="none" stroke="#E5E7EB" strokeWidth={strokeWidth} strokeLinecap="round" />
+        <path d={`M ${startX},${startY} A ${radius},${radius} 0 0,1 ${endX},${startY}`} fill="none" stroke="#2563EB" strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={offset} style={{ transition: "stroke-dashoffset 1s ease-out" }} strokeLinecap="round" />
+      </svg>
+      <div style={{ position: "absolute", bottom: strokeWidth / 2 - 10, left: 0, width: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ fontSize: "2.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-1px", lineHeight: 1 }}>{score}<span style={{ fontSize: "1.2rem", color: "#6B7280", fontWeight: 600 }}>/100</span></div>
+        <div style={{ fontSize: "1rem", fontWeight: 600, color: score >= 75 ? "#10B981" : score >= 50 ? "#3B82F6" : "#F59E0B", marginTop: "8px" }}>
+           {score >= 75 ? "High" : score >= 50 ? "Medium" : "Low"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
