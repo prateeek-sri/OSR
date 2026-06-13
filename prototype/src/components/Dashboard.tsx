@@ -72,6 +72,7 @@ export default function Dashboard() {
   const [view, setView] = useState<AppView>("landing");
   const [activeMilestones, setActiveMilestones] = useState<Record<string, boolean | undefined>>({});
   const [isSaved, setIsSaved] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   
   const [osProjects, setOsProjects] = useState<any[]>([]);
   const [osTimeframe, setOsTimeframe] = useState<"daily" | "weekly" | "monthly">("weekly");
@@ -341,8 +342,14 @@ export default function Dashboard() {
         <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
            <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={18}/>} />
            <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => state?.remediation_strategy && setView("overview")} disabled={!state?.remediation_strategy} icon={<Target size={18}/>} />
-           <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => state && setView("opensource")} disabled={!state} icon={<Search size={18}/>} />
-           <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => state?.dynamic_roadmap && setView("roadmap")} disabled={!state?.dynamic_roadmap} icon={<Map size={18}/>} />
+           <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
+              if (!session) { setIsLoginModalOpen(true); return; }
+              if (state) setView("opensource");
+           }} disabled={!state} icon={<Search size={18}/>} />
+           <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
+              if (!session) { setIsLoginModalOpen(true); return; }
+              if (state?.dynamic_roadmap) setView("roadmap");
+           }} disabled={!state?.dynamic_roadmap} icon={<Map size={18}/>} />
            
            <div style={{ marginTop: "32px", marginBottom: "8px", paddingLeft: "20px", fontSize: "0.75rem", color: "#6B7280", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Preferences</div>
            <SidebarLink active={false} text="Settings" disabled={true} icon={<Settings size={18}/>} />
@@ -875,6 +882,48 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
+
+      {/* ═══ LOGIN MODAL (Brilliant Style) ═══ */}
+      {isLoginModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)" }} onClick={() => setIsLoginModalOpen(false)}>
+          <div style={{ background: "#fff", width: "90%", maxWidth: "440px", borderRadius: "16px", padding: "48px 40px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
+            
+            {/* Brilliant Logo Lookalike */}
+            <div style={{ width: "80px", height: "80px", position: "relative", marginBottom: "24px" }}>
+              <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "#10B981", borderRadius: "24px", transform: "rotate(-15deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ width: "32px", height: "32px", background: "#fff", borderRadius: "8px", transform: "rotate(15deg)", position: "relative" }}>
+                   <div style={{ position: "absolute", top: 4, left: 4, width: 12, height: 12, background: "#111", borderRadius: 2 }} />
+                </div>
+              </div>
+              <div style={{ position: "absolute", top: "10px", left: "-20px", width: "120%", height: "120%", background: "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(255,255,255,0) 70%)", zIndex: -1 }} />
+            </div>
+
+            <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111", marginBottom: "32px" }}>Log in</h2>
+
+            <button 
+              onClick={() => signIn("github")}
+              style={{ width: "100%", padding: "16px", background: "#111", color: "#fff", border: "none", borderRadius: "12px", fontSize: "1.05rem", fontWeight: 700, cursor: "pointer", transition: "all 0.2s", display: "flex", alignItems: "center", justifyContent: "center", gap: "12px" }}
+              onMouseOver={e => e.currentTarget.style.transform="translateY(-2px)"}
+              onMouseOut={e => e.currentTarget.style.transform="translateY(0)"}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.009-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.416 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              Log in with GitHub
+            </button>
+
+            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginTop: "32px", fontSize: "0.95rem", fontWeight: 600 }}>
+              <a href="#" style={{ color: "#111", textDecoration: "underline", textUnderlineOffset: "4px" }} onClick={e => e.preventDefault()}>Reset password</a>
+              <div style={{ color: "#111" }}>
+                New user? <a href="#" style={{ color: "#3B82F6", textDecoration: "underline", textUnderlineOffset: "4px" }} onClick={e => e.preventDefault()}>Sign up</a>
+              </div>
+            </div>
+
+            <p style={{ marginTop: "40px", fontSize: "0.7rem", color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 }}>
+              This site is protected by reCAPTCHA and the Google Privacy<br/>Policy and Terms of Service apply
+            </p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
