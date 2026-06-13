@@ -19,6 +19,7 @@ import {
   LogIn,
   User,
   Settings,
+  Puzzle,
 } from "lucide-react";
 import type { GlobalState, PipelineStep } from "@/lib/types";
 
@@ -586,60 +587,71 @@ export default function Dashboard() {
 
       {/* ═══ GAP ANALYSIS VIEW ═══ */}
       {(view === "overview" || view === "gaps") && state && !isRunning && (
-        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1000px" }}>
+        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1200px", width: "100%", margin: "0 auto", paddingBottom: "48px" }}>
           
           {/* Header Action Bar */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "20px 24px", borderRadius: "12px", border: "1px solid var(--border)", color: "var(--text-primary)", boxShadow: "var(--shadow-sm)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "24px 32px", borderBottom: "1px solid #E5E7EB", borderRadius: "0 0 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} />
-                <span style={{ fontWeight: 600, fontSize: "0.95rem" }}>Live Analysis Ready for {state.user_context.target_role || "your target role"}</span>
-              </div>
-              <div style={{ borderLeft: "1px solid var(--border)", height: "24px" }} />
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Recruitability:</span>
-                <span style={{ fontWeight: 800, fontSize: "1.05rem", color: state.analysis_results.employability_index >= 75 ? "var(--success)" : state.analysis_results.employability_index >= 50 ? "#3B82F6" : "#F59E0B" }}>
-                  {state.analysis_results.employability_index}%
-                </span>
+              <h2 style={{ fontSize: "1.6rem", fontWeight: 700, margin: 0, color: "#111827", letterSpacing: "-0.5px" }}>Gap Analysis Detailed View</h2>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "#ECFDF5", padding: "6px 12px", borderRadius: "16px" }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
+                <span style={{ fontWeight: 600, fontSize: "0.85rem", color: "#065F46" }}>Live Analysis</span>
               </div>
             </div>
             
-            {/* Direct Roadmap Generator Button */}
-            <button className="btn-primary" onClick={runRoadmap} disabled={isRunning || (state.dynamic_roadmap?.milestones?.length || 0) > 0} style={{ padding: "8px 16px", fontSize: "0.85rem", whiteSpace: "nowrap" }}>
-              <Map size={14} /> {(state.dynamic_roadmap?.milestones?.length || 0) > 0 ? "Roadmap Generated" : "Generate Career Roadmap"}
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827" }}>Recruitability:</span>
+                <span style={{ fontWeight: 800, fontSize: "1.2rem", color: state.analysis_results.employability_index >= 75 ? "#10B981" : state.analysis_results.employability_index >= 50 ? "#3B82F6" : "#F59E0B" }}>
+                  {state.analysis_results.employability_index}%
+                </span>
+              </div>
+              <button onClick={runRoadmap} disabled={isRunning || (state.dynamic_roadmap?.milestones?.length || 0) > 0} style={{ background: "#2563EB", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: 600, fontSize: "0.95rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+                {(state.dynamic_roadmap?.milestones?.length || 0) > 0 ? "Roadmap Generated" : "Generate Career Roadmap"}
+              </button>
+            </div>
           </div>
 
-          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "flex-start" }}>
+          <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "flex-start", padding: "0 32px" }}>
             {/* Strengths Column */}
-            <div style={{ flex: "1 1 400px", display: "flex", flexDirection: "column", gap: "16px" }}>
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 8px 0" }}>Core Strengths</h3>
+            <div style={{ flex: "1 1 450px", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#10B981", margin: "0 0 4px 0" }}>Core Strengths</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
               {Object.entries(state.analysis_results.technical_proficiency)
                 .sort((a, b) => b[1].score - a[1].score)
                 .slice(0, 4)
                 .map(([name, data], idx) => (
-                   <div key={`str-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid var(--border)", padding: "24px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "var(--shadow-sm)" }}>
+                   <div key={`str-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #10B981", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                         <h4 style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>Mastered: {name}</h4>
-                         <span style={{ padding: "4px 12px", background: "rgba(16, 185, 129, 0.1)", color: "#059669", fontSize: "0.75rem", borderRadius: "6px", fontWeight: 600 }}>Strength</span>
+                         <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
+                           <CheckCircle2 size={16} />
+                         </div>
+                         <span style={{ padding: "4px 16px", background: "#10B981", color: "#fff", fontSize: "0.75rem", borderRadius: "20px", fontWeight: 600 }}>Strength</span>
                       </div>
-                      <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.5, margin: 0 }}>You have strong experience utilizing {name} across your open-source contributions. Recruiter signal is high.</p>
+                      <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "4px 0 0 0" }}>{name}</h4>
+                      <p style={{ fontSize: "0.9rem", color: "#4B5563", lineHeight: 1.5, margin: 0 }}>Proficient in {name} with high recruiter signal and demonstrated capability.</p>
                    </div>
                 ))}
+              </div>
             </div>
 
             {/* Gaps Column */}
-            <div style={{ flex: "1 1 400px", display: "flex", flexDirection: "column", gap: "16px" }}>
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text-primary)", margin: "0 0 8px 0" }}>Identified Gaps</h3>
+            <div style={{ flex: "1 1 450px", display: "flex", flexDirection: "column", gap: "16px" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#2563EB", margin: "0 0 4px 0" }}>Identified Gaps</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
               {state.analysis_results.structural_gaps.map((gap, idx) => (
-                   <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid var(--border)", padding: "24px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "var(--shadow-sm)" }}>
+                   <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #2563EB", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                         <h4 style={{ fontSize: "1.05rem", fontWeight: 600, color: "var(--text-primary)", margin: 0 }}>{gap.title}</h4>
-                         <span style={{ padding: "4px 12px", background: gap.severity === "critical" ? "rgba(220, 38, 38, 0.1)" : "rgba(217, 119, 6, 0.1)", color: gap.severity === "critical" ? "#DC2626" : "#D97706", fontSize: "0.75rem", borderRadius: "6px", fontWeight: 600 }}>{gap.severity === "critical" ? "Critical Gap" : "High Priority"}</span>
+                         <div style={{ color: "#2563EB" }}>
+                           <Puzzle size={24} fill="#2563EB" color="#2563EB" />
+                         </div>
+                         <span style={{ padding: "4px 16px", background: "#2563EB", color: "#fff", fontSize: "0.75rem", borderRadius: "20px", fontWeight: 600 }}>Gap</span>
                       </div>
-                      <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.5, margin: 0 }}>{gap.description}</p>
+                      <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "4px 0 0 0" }}>{gap.title}</h4>
+                      <p style={{ fontSize: "0.9rem", color: "#4B5563", lineHeight: 1.5, margin: 0 }}>{gap.description}</p>
                    </div>
               ))}
+              </div>
             </div>
           </div>
         </div>
