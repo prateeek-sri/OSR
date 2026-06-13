@@ -19,6 +19,10 @@ interface AppStateContextType {
   setError: React.Dispatch<React.SetStateAction<string | null>>;
   view: "landing" | "skills" | "overview" | "gaps" | "opensource" | "roadmap";
   setView: React.Dispatch<React.SetStateAction<"landing" | "skills" | "overview" | "gaps" | "opensource" | "roadmap">>;
+  savedRepos: any[];
+  setSavedRepos: React.Dispatch<React.SetStateAction<any[]>>;
+  isRoadmapSaved: boolean;
+  setIsRoadmapSaved: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AppStateContext = createContext<AppStateContextType | null>(null);
@@ -38,6 +42,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const [completedSteps, setCompletedSteps] = useState<PipelineStep[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<"landing" | "skills" | "overview" | "gaps" | "opensource" | "roadmap">("landing");
+  const [savedRepos, setSavedRepos] = useState<any[]>([]);
+  const [isRoadmapSaved, setIsRoadmapSaved] = useState<boolean>(false);
 
   // Load from local storage on mount
   useEffect(() => {
@@ -49,6 +55,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         setUsername(parsed.username || "");
         setTargetRole(parsed.targetRole || "");
         setView(parsed.view || "landing");
+        setSavedRepos(parsed.savedRepos || []);
+        setIsRoadmapSaved(parsed.isRoadmapSaved || false);
       }
     } catch(e) {}
   }, []);
@@ -56,13 +64,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   // Save to local storage on change
   useEffect(() => {
     try {
-      localStorage.setItem("osr_state", JSON.stringify({ state, username, targetRole, view }));
+      localStorage.setItem("osr_state", JSON.stringify({ state, username, targetRole, view, savedRepos, isRoadmapSaved }));
     } catch(e) {}
-  }, [state, username, targetRole, view]);
+  }, [state, username, targetRole, view, savedRepos, isRoadmapSaved]);
 
   return (
     <SessionProvider>
-      <AppStateContext.Provider value={{ state, setState, username, setUsername, targetRole, setTargetRole, step, setStep, completedSteps, setCompletedSteps, error, setError, view, setView }}>
+      <AppStateContext.Provider value={{ state, setState, username, setUsername, targetRole, setTargetRole, step, setStep, completedSteps, setCompletedSteps, error, setError, view, setView, savedRepos, setSavedRepos, isRoadmapSaved, setIsRoadmapSaved }}>
         {children}
       </AppStateContext.Provider>
     </SessionProvider>

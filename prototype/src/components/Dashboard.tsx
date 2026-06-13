@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import {
   GitBranch,
@@ -70,11 +70,22 @@ type AppView = "landing" | "skills" | "overview" | "gaps" | "opensource" | "road
 export default function Dashboard() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { state, setState, username, setUsername, targetRole, setTargetRole, step, setStep, completedSteps, setCompletedSteps, error, setError, view, setView } = useAppState();
+  const { state, setState, username, setUsername, targetRole, setTargetRole, step, setStep, completedSteps, setCompletedSteps, error, setError, view, setView, savedRepos, setSavedRepos, isRoadmapSaved, setIsRoadmapSaved } = useAppState();
   const [activeMilestones, setActiveMilestones] = useState<Record<string, boolean | undefined>>({});
-  const [isSaved, setIsSaved] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Roadmap progression state
   const [completedStages, setCompletedStages] = useState<Set<number>>(new Set());
@@ -376,7 +387,7 @@ export default function Dashboard() {
             </button>
             <Clock size={18} color="#9CA3AF" style={{ cursor: "pointer" }} />
             {session ? (
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", position: "relative" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              <div ref={dropdownRef} style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", position: "relative" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 {session.user?.image ? <img src={session.user.image} style={{width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover'}}/> : (session.user?.name?.charAt(0) || "U")}
                 {isDropdownOpen && (
                   <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "#fff", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: "1px solid #E5E7EB", overflow: "hidden", minWidth: "160px", zIndex: 100 }}>
@@ -789,10 +800,10 @@ export default function Dashboard() {
                   <p style={{ color: "var(--text-secondary)", margin: 0 }}>Target: {state.user_context.target_role} • {state.dynamic_roadmap.milestones.length} Active Stages</p>
                 </div>
                 <button 
-                  className={`btn-${isSaved ? 'secondary' : 'primary'}`} 
-                  onClick={() => setIsSaved(!isSaved)}
+                  className={`btn-${isRoadmapSaved ? 'secondary' : 'primary'}`} 
+                  onClick={() => setIsRoadmapSaved(!isRoadmapSaved)}
                 >
-                  {isSaved ? "✓ Saved to Profile" : "Save Pipeline"}
+                  {isRoadmapSaved ? "✓ Saved to Profile" : "Save Pipeline"}
                 </button>
               </div>
               
@@ -1079,6 +1090,18 @@ export default function Dashboard() {
                           View Issue on GitHub
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
                         </a>
+                      </div>
+                      <div style={{ marginTop: "12px", textAlign: "right" }}>
+                        {savedRepos.find(r => r.id === repo.id) ? (
+                          <button onClick={() => setSavedRepos(prev => prev.filter(r => r.id !== repo.id))} style={{ background: "#F3F4F6", color: "#4B5563", border: "1px solid #E5E7EB", padding: "8px 16px", borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                            ✓ Saved
+                          </button>
+                        ) : (
+                          <button onClick={() => setSavedRepos(prev => [...prev, repo])} style={{ background: "#111827", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg>
+                            Save Repo
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

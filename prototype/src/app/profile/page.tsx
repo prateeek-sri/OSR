@@ -1,5 +1,5 @@
 "use client";
-
+import React, { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useAppState } from "@/components/Providers";
@@ -16,8 +16,21 @@ import {
 
 export default function ProfilePage() {
   const { data: session } = useSession();
-  const { state, username } = useAppState();
+  const { state, username, savedRepos, isRoadmapSaved, setView } = useAppState();
   const router = useRouter();
+  
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const githubUsername = session?.user?.name || "";
   const profile = state?.raw_github_metadata?.profile;
@@ -37,17 +50,32 @@ export default function ProfilePage() {
     <div style={{ minHeight: "100vh", background: "#FAFAFA", fontFamily: "'Inter', -apple-system, sans-serif" }}>
 
       {/* Top Bar */}
-      <header style={{ background: "#fff", borderBottom: "1px solid #E5E7EB", padding: "16px 40px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, zIndex: 50 }}>
+      <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "#fff", borderBottom: "1px solid #E5E7EB", position: "sticky", top: 0, zIndex: 50 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <button onClick={() => router.push("/dashboard")} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", color: "#6B7280", fontSize: "0.95rem", fontWeight: 600, padding: "8px 0" }}>
             <ArrowLeft size={18} /> Back to Dashboard
           </button>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div onClick={() => window.location.href = "/"} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.3rem", display: "flex", alignItems: "center", gap: "6px", letterSpacing: "-0.5px", color: "#111827" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+          <div onClick={() => window.location.href = "/"} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.3rem", display: "flex", alignItems: "center", gap: "6px", letterSpacing: "-0.5px", color: "#111827", marginRight: "16px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
             IDR
           </div>
+          {session && (
+            <div ref={dropdownRef} style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", position: "relative" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+              {session.user?.image ? <img src={session.user.image} style={{width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover'}}/> : (session.user?.name?.charAt(0) || "U")}
+              {isDropdownOpen && (
+                <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "#fff", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: "1px solid #E5E7EB", overflow: "hidden", minWidth: "160px", zIndex: 100 }}>
+                  <button onClick={(e) => { e.stopPropagation(); setIsDropdownOpen(false); router.push('/profile'); }} style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", borderBottom: "1px solid #E5E7EB", cursor: "pointer", fontSize: "0.9rem", color: "#111827", textAlign: "left" }} onMouseOver={(e) => e.currentTarget.style.background = "#F3F4F6"} onMouseOut={(e) => e.currentTarget.style.background = "transparent"}>
+                    <User size={16} /> Profile
+                  </button>
+                  <button onClick={(e) => { e.stopPropagation(); signOut(); }} style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", cursor: "pointer", fontSize: "0.9rem", color: "#EF4444", textAlign: "left" }} onMouseOver={(e) => e.currentTarget.style.background = "#FEF2F2"} onMouseOut={(e) => e.currentTarget.style.background = "transparent"}>
+                    <LogOut size={16} /> Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </header>
 
@@ -171,6 +199,46 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Saved Resources */}
+        {(savedRepos?.length > 0 || isRoadmapSaved) && (
+          <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", marginTop: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "0 0 24px" }}>Saved Resources</h3>
+            
+            {isRoadmapSaved && state?.dynamic_roadmap && (
+              <div style={{ marginBottom: savedRepos?.length > 0 ? "24px" : "0" }}>
+                <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Career Pipeline</div>
+                <div onClick={() => { setView("roadmap"); router.push("/dashboard"); }} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderRadius: "12px", border: "1px solid #BFDBFE", background: "#EFF6FF", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.transform="translateY(-2px)"} onMouseOut={e => e.currentTarget.style.transform="translateY(0)"}>
+                  <div>
+                    <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#1E40AF", margin: "0 0 4px" }}>Target Role: {state?.user_context?.target_role || "Unknown"}</h4>
+                    <p style={{ fontSize: "0.85rem", color: "#3B82F6", margin: 0 }}>{state.dynamic_roadmap.milestones.length} Stages • Auto-generated roadmap</p>
+                  </div>
+                  <div style={{ background: "#3B82F6", color: "#fff", padding: "8px 16px", borderRadius: "8px", fontSize: "0.85rem", fontWeight: 600 }}>Resume Roadmap</div>
+                </div>
+              </div>
+            )}
+
+            {savedRepos?.length > 0 && (
+              <div>
+                <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "12px", textTransform: "uppercase", letterSpacing: "0.5px" }}>Open Source Projects</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {savedRepos.map(repo => (
+                    <a key={repo.id} href={repo.html_url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px", borderRadius: "12px", border: "1px solid #E5E7EB", background: "#fff", textDecoration: "none", transition: "all 0.2s" }} onMouseOver={e => { e.currentTarget.style.borderColor = "#D1D5DB"; e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.05)"; }} onMouseOut={e => { e.currentTarget.style.borderColor = "#E5E7EB"; e.currentTarget.style.boxShadow = "none"; }}>
+                      <div>
+                        <h4 style={{ fontSize: "1rem", fontWeight: 600, color: "#111827", margin: "0 0 4px" }}>{repo.full_name}</h4>
+                        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                          <span style={{ fontSize: "0.8rem", color: "#6B7280", display: "flex", alignItems: "center", gap: "4px" }}><div style={{width: 8, height: 8, borderRadius: "50%", background: "#10B981"}}/> {repo.language || "Unknown"}</span>
+                          <span style={{ fontSize: "0.8rem", color: "#6B7280", display: "flex", alignItems: "center", gap: "4px" }}><Star size={12}/> {repo.stargazers_count}</span>
+                        </div>
+                      </div>
+                      <ExternalLink size={16} color="#9CA3AF" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Account Info */}
         <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", marginTop: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.03)" }}>
