@@ -587,7 +587,7 @@ export default function Dashboard() {
 
       {/* ═══ GAP ANALYSIS VIEW ═══ */}
       {(view === "overview" || view === "gaps") && state && !isRunning && (
-        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "1200px", width: "100%", margin: "0 auto", paddingBottom: "48px" }}>
+        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "100%", width: "100%", margin: "0 auto", paddingBottom: "48px" }}>
           
           {/* Header Action Bar */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "24px 32px", borderBottom: "1px solid #E5E7EB", borderRadius: "0 0 16px 16px" }}>
@@ -614,9 +614,9 @@ export default function Dashboard() {
 
           <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "flex-start", padding: "0 32px" }}>
             {/* Strengths Column */}
-            <div style={{ flex: "1 1 450px", display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
               <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#10B981", margin: "0 0 4px 0" }}>Core Strengths</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
               {Object.entries(state.analysis_results.technical_proficiency)
                 .sort((a, b) => b[1].score - a[1].score)
                 .slice(0, 4)
@@ -636,9 +636,9 @@ export default function Dashboard() {
             </div>
 
             {/* Gaps Column */}
-            <div style={{ flex: "1 1 450px", display: "flex", flexDirection: "column", gap: "16px" }}>
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
               <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#2563EB", margin: "0 0 4px 0" }}>Identified Gaps</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
               {state.analysis_results.structural_gaps.map((gap, idx) => (
                    <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #2563EB", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
