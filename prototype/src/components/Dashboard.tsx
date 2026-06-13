@@ -908,13 +908,15 @@ export default function Dashboard() {
                                     const thumbs = [
                                       "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=300&q=80",
                                       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=300&q=80",
-                                      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=300&q=80"
+                                      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=300&q=80",
+                                      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=300&q=80"
                                     ];
                                     const fallbackBg = thumbs[i % thumbs.length];
-                                    const bgUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : fallbackBg;
+                                    const bgUrl = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : fallbackBg;
                                     
-                                    // if there's no real URL, fallback to search
-                                    const targetUrl = (res.url && res.url.startsWith("http")) ? res.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(res.title + " course")}`;
+                                    // FORCE search query to prevent AI hallucinations from opening random/invalid videos
+                                    const isSearchQuery = res.url?.includes("search_query");
+                                    const targetUrl = isSearchQuery ? res.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(res.title + " programming tutorial")}`;
 
                                     return (
                                       <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "transform 0.2s" }} onClick={() => window.open(targetUrl, "_blank")} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-4px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}>
