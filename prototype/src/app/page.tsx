@@ -75,33 +75,33 @@ export default function Home() {
             onSubmit={handleSearch}
             style={{ width: "90%", maxWidth: "800px", background: "#fff", borderRadius: "24px", padding: "32px", boxShadow: "0 24px 48px rgba(0,0,0,0.05)", zIndex: 10, display: "flex", flexDirection: "column" }}
           >
-            <h2 style={{ fontSize: "2rem", fontWeight: 800, margin: "0 0 8px 0", letterSpacing: "-0.5px" }}>Get Started</h2>
-            <p style={{ fontSize: "1.1rem", color: "#666", margin: "0 0 24px 0", fontWeight: 500 }}>Enter your GitHub username to generate a roadmap.</p>
+            <input 
+              type="text" 
+              placeholder={session ? "Enter GitHub username..." : "A github username to analyze and"}
+              value={localUsername}
+              onChange={(e) => setLocalUsername(e.target.value)}
+              style={{ width: "100%", border: "none", outline: "none", fontSize: "1.6rem", fontWeight: 500, color: "#111", background: "transparent", marginBottom: "40px", padding: 0 }}
+            />
             
-            <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              <div style={{ flex: 1, position: "relative" }}>
-                <div style={{ position: "absolute", left: "20px", top: "50%", transform: "translateY(-50%)", color: "#9CA3AF" }}>
-                  <Search size={24} />
-                </div>
-                <input 
-                  type="text" 
-                  placeholder="github username..." 
-                  value={localUsername}
-                  onChange={(e) => setLocalUsername(e.target.value)}
-                  style={{ width: "100%", padding: "20px 20px 20px 56px", fontSize: "1.2rem", borderRadius: "16px", border: "2px solid #E5E7EB", outline: "none", fontWeight: 500, transition: "border-color 0.2s" }}
-                  onFocus={e => e.currentTarget.style.borderColor = "#4DD0E1"}
-                  onBlur={e => e.currentTarget.style.borderColor = "#E5E7EB"}
-                />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+              <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                <button type="button" style={{ width: "44px", height: "44px", borderRadius: "50%", border: "none", background: "#F5F5F5", color: "#111", fontSize: "1.5rem", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontWeight: 300 }}>+</button>
+                <button type="button" style={{ display: "flex", alignItems: "center", gap: "8px", border: "none", background: "#FEF2F2", color: "#EF4444", padding: "0 20px", borderRadius: "24px", fontWeight: 700, cursor: "pointer", height: "44px", fontSize: "0.95rem" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+                  Inspiration
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
               </div>
-              <button type="submit" style={{ background: "#111", color: "#fff", border: "none", padding: "0 40px", borderRadius: "16px", fontSize: "1.2rem", fontWeight: 700, cursor: "pointer", transition: "transform 0.2s" }} onMouseOver={e => e.currentTarget.style.transform="scale(1.02)"} onMouseOut={e => e.currentTarget.style.transform="scale(1)"}>
-                Analyze
-              </button>
+              
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                {session && (
+                  <a href="#" onClick={(e) => { e.preventDefault(); setView("skills"); router.push("/dashboard"); }} style={{ color: "#4DD0E1", textDecoration: "underline", cursor: "pointer", fontSize: "0.95rem", fontWeight: 600 }}>or go to dashboard</a>
+                )}
+                <button type="submit" disabled={!localUsername} style={{ width: "56px", height: "56px", borderRadius: "50%", border: "none", background: "#222", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: !localUsername ? "not-allowed" : "pointer", transition: "all 0.2s" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                </button>
+              </div>
             </div>
-            {session && (
-              <p style={{ marginTop: "16px", fontSize: "0.95rem", color: "#666", fontWeight: 500 }}>
-                Or just <a href="#" onClick={(e) => { e.preventDefault(); setView("skills"); router.push("/dashboard"); }} style={{ color: "#4DD0E1", textDecoration: "underline", cursor: "pointer" }}>go to your dashboard</a> using your connected account.
-              </p>
-            )}
           </form>
         </div>
       </main>
