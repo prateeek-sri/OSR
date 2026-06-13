@@ -911,20 +911,31 @@ export default function Dashboard() {
                                 <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600, marginBottom: "12px" }}>Curated Video Courses</div>
                                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "16px" }}>
                                   {m.resources.slice(0, 3).map((res, i) => {
+                                    const ytMatch = res.url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+                                    const ytId = ytMatch ? ytMatch[1] : null;
+                                    
                                     const thumbs = [
                                       "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=300&q=80",
                                       "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=300&q=80",
                                       "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=300&q=80"
                                     ];
-                                    const bg = thumbs[i % thumbs.length];
+                                    const fallbackBg = thumbs[i % thumbs.length];
+                                    const bgUrl = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : fallbackBg;
+                                    
+                                    // if there's no real URL, fallback to search
+                                    const targetUrl = (res.url && res.url.startsWith("http")) ? res.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(res.title + " course")}`;
+
                                     return (
-                                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "transform 0.2s" }} onClick={() => window.open(res.url, "_blank")} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-4px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}>
-                                        <div style={{ width: "100%", aspectRatio: "16/9", borderRadius: "12px", background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${bg}) center/cover`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
-                                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#111827"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "transform 0.2s" }} onClick={() => window.open(targetUrl, "_blank")} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-4px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}>
+                                        <div style={{ width: "100%", aspectRatio: "16/9", borderRadius: "12px", background: "#000", position: "relative", overflow: "hidden" }}>
+                                          <img src={bgUrl} onError={(e) => { e.currentTarget.src = fallbackBg; }} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} alt={res.title} />
+                                          <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+                                              <svg width="16" height="16" viewBox="0 0 24 24" fill="#111827"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                            </div>
                                           </div>
                                         </div>
-                                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#4B5563", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 4px" }}>{res.title}</span>
+                                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#4B5563", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{res.title}</span>
                                       </div>
                                     );
                                   })}

@@ -372,13 +372,13 @@ Return ONLY valid JSON:
       "linked_gap_id": "<gap_id if applicable, null otherwise>",
       "completion_criteria": ["<criterion1>", "<criterion2>"],
       "resources": [
-        { "title": "<Name of course, article, or official docs>", "url": "<Real URL to the resource>" }
+        { "title": "<Name of specific YouTube video tutorial or course>", "url": "<Actual YouTube video URL (must be a youtube.com/watch?v=... link)>" }
       ]
     }
   ]
 }
 
-Generate 5-8 milestones total. Make them specific, actionable, and always include 1-2 high-quality learning resources (with real URLs) for every active and future milestone.`;
+Generate 5-8 milestones total. Make them specific, actionable, and always include 1-2 high-quality YouTube video resources (with real youtube.com URLs) for every active and future milestone.`;
 
   const userData = JSON.stringify({
     technical_proficiency: state.analysis_results.technical_proficiency,
