@@ -684,7 +684,10 @@ export default function Dashboard() {
                   {state.analysis_results.employability_index}%
                 </span>
               </div>
-              <button onClick={runRoadmap} disabled={isRunning || (state.dynamic_roadmap?.milestones?.length || 0) > 0} style={{ background: "#2563EB", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: 600, fontSize: "0.95rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
+              <button onClick={() => {
+                if (!session) { setIsLoginModalOpen(true); return; }
+                runRoadmap();
+              }} disabled={isRunning || (state.dynamic_roadmap?.milestones?.length || 0) > 0} style={{ background: "#2563EB", color: "#fff", border: "none", padding: "10px 20px", borderRadius: "8px", fontWeight: 600, fontSize: "0.95rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}>
                 {(state.dynamic_roadmap?.milestones?.length || 0) > 0 ? "Roadmap Generated" : "Generate Career Roadmap"}
               </button>
             </div>

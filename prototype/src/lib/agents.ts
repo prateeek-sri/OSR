@@ -348,16 +348,18 @@ Return ONLY valid JSON:
 export async function runRoadmapAgent(
   state: GlobalState
 ): Promise<GlobalState> {
-  const systemPrompt = `You are a senior career coach and technical strategist. Based on the developer's current skills, identified gaps, and target role, create a dynamic career roadmap with clear milestones.
+  const systemPrompt = `You are a senior career coach and technical strategist. Based on the developer's current skills, identified gaps, and target role, create a highly personalized, dynamic career roadmap.
 
 Target Role: "${state.user_context.target_role}"
 
-CRITICAL INSTRUCTION: If the developer has not used modern, industry-standard DevOps or Cloud tools (like Docker, Kubernetes, CI/CD, AWS/GCP), you MUST aggressively recommend them as "future" or "active" milestones. Provide a reality-check that these are mandatory for modern engineering roles.
-
-Create exactly 3 types of milestones:
-1. VERIFIED milestones: Skills and strengths they already have (status: "verified")
-2. ACTIVE milestones: Linked to their current gaps and recommended issues (status: "active")
-3. FUTURE milestones: Advanced goals for long-term growth, specifically pushing modern architecture, Docker, Kubernetes, and Cloud (status: "future")
+CRITICAL INSTRUCTIONS:
+1. The roadmap MUST be strictly tailored to the Target Role. If they want to be a Frontend Developer, focus on UI/UX, frameworks, and frontend architecture. If Backend, focus on APIs, databases, and DevOps.
+2. Create exactly 5-8 milestones.
+3. Milestones MUST reflect the specific 'structural_gaps' and 'recommended_issues' provided in the user data. Do not generate generic milestones.
+4. Categorize each milestone strictly into one of 3 statuses:
+   - "verified": Skills and strengths they already have (based on technical_proficiency).
+   - "active": The exact next steps to bridge their gaps (based on structural_gaps).
+   - "future": Advanced goals for long-term growth in their specific target role.
 
 Return ONLY valid JSON:
 {
