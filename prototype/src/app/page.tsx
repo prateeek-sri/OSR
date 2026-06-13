@@ -12,10 +12,13 @@ export default function Home() {
   const { setUsername, setView, setTargetRole } = useAppState();
   const [localUsername, setLocalUsername] = useState("");
 
+  const githubUsername = (session as unknown as Record<string, unknown>)?.githubUsername as string || "";
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (localUsername.trim()) {
-      setUsername(localUsername.trim());
+    const finalUsername = localUsername.trim() || githubUsername;
+    if (finalUsername) {
+      setUsername(finalUsername);
       setView("skills");
       router.push("/dashboard");
     }
@@ -77,7 +80,7 @@ export default function Home() {
           >
             <input 
               type="text" 
-              placeholder={session ? "Enter GitHub username..." : "A github username to analyze and"}
+              placeholder={session ? (githubUsername || "Enter GitHub username...") : "A github username to analyze and"}
               value={localUsername}
               onChange={(e) => setLocalUsername(e.target.value)}
               style={{ width: "100%", border: "none", outline: "none", fontSize: "1.6rem", fontWeight: 500, color: "#111", background: "transparent", marginBottom: "40px", padding: 0 }}
@@ -97,7 +100,7 @@ export default function Home() {
                 {session && (
                   <a href="#" onClick={(e) => { e.preventDefault(); setView("skills"); router.push("/dashboard"); }} style={{ color: "#4DD0E1", textDecoration: "underline", cursor: "pointer", fontSize: "0.95rem", fontWeight: 600 }}>or go to dashboard</a>
                 )}
-                <button type="submit" disabled={!localUsername} style={{ width: "56px", height: "56px", borderRadius: "50%", border: "none", background: "#222", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: !localUsername ? "not-allowed" : "pointer", transition: "all 0.2s" }}>
+                <button type="submit" disabled={!localUsername && !githubUsername} style={{ width: "56px", height: "56px", borderRadius: "50%", border: "none", background: "#222", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (!localUsername && !githubUsername) ? "not-allowed" : "pointer", transition: "all 0.2s" }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
                 </button>
               </div>
