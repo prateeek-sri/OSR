@@ -437,15 +437,65 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* ═══ SKELETON LOADER ═══ */}
+      {/* ═══ SKELETON LOADER ═══ */}
       {isRunning && (
-        <div className="fade-in" style={{ padding: "24px 0", width: "100%", display: "flex", flexDirection: "column", gap: "24px", opacity: 0.7 }}>
-          <div className="skeleton-pulse" style={{ height: "140px", borderRadius: "16px", background: "var(--bg-elevated)" }} />
-          <div style={{ display: "flex", gap: "24px", flexDirection: "row", flexWrap: "wrap" }}>
-            <div className="skeleton-pulse" style={{ flex: 1, minWidth: "300px", height: "240px", borderRadius: "16px", background: "var(--bg-elevated)" }} />
-            <div className="skeleton-pulse" style={{ flex: 2, minWidth: "300px", height: "240px", borderRadius: "16px", background: "var(--bg-elevated)" }} />
-          </div>
-          <div className="skeleton-pulse" style={{ height: "300px", borderRadius: "16px", background: "var(--bg-elevated)" }} />
+        <div className="fade-in" style={{ padding: "24px 0", width: "100%", display: "flex", flexDirection: "column", gap: "24px", opacity: 0.6 }}>
+          {view === "skills" && (
+            <>
+              {/* Profile setup / Stats loader */}
+              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="skeleton-pulse" style={{ flex: 1, minWidth: "200px", height: "120px", borderRadius: "16px", background: "#E5E7EB" }} />
+                ))}
+              </div>
+              <div style={{ display: "flex", gap: "24px", flexDirection: "row", flexWrap: "wrap", marginTop: "16px" }}>
+                <div className="skeleton-pulse" style={{ flex: 1, minWidth: "300px", height: "340px", borderRadius: "16px", background: "#E5E7EB" }} />
+                <div className="skeleton-pulse" style={{ flex: 2, minWidth: "300px", height: "340px", borderRadius: "16px", background: "#E5E7EB" }} />
+              </div>
+            </>
+          )}
+          {(view === "overview" || view === "gaps") && (
+            <>
+              {/* Gap Analysis Loader */}
+              <div className="skeleton-pulse" style={{ height: "140px", borderRadius: "16px", background: "#E5E7EB" }} />
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
+                {[1, 2, 3, 4].map(i => (
+                  <div key={i} className="skeleton-pulse" style={{ height: "220px", borderRadius: "16px", background: "#E5E7EB" }} />
+                ))}
+              </div>
+            </>
+          )}
+          {view === "roadmap" && (
+            <>
+              {/* Roadmap Loader */}
+              <div className="skeleton-pulse" style={{ height: "100px", borderRadius: "16px", background: "#E5E7EB", marginBottom: "32px" }} />
+              {[1, 2].map(i => (
+                <div key={i} style={{ display: "flex", gap: "32px", marginBottom: "48px" }}>
+                  <div className="skeleton-pulse" style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#E5E7EB", flexShrink: 0 }} />
+                  <div className="skeleton-pulse" style={{ flex: 1, height: "320px", borderRadius: "16px", background: "#E5E7EB" }} />
+                </div>
+              ))}
+            </>
+          )}
+          {view === "opensource" && (
+            <>
+              {/* Open Source Matchmaker Loader */}
+              {[1, 2, 3].map(i => (
+                <div key={i} className="skeleton-pulse" style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
+                  <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "12px" }}>
+                    <div className="skeleton-pulse" style={{ height: "28px", width: "60%", borderRadius: "8px", background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: "24px", width: "80%", borderRadius: "8px", background: "#E5E7EB" }} />
+                  </div>
+                  <div style={{ flex: "1 1 300px", background: "#F3F4F6", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div className="skeleton-pulse" style={{ height: "16px", width: "40%", borderRadius: "4px", background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: "40px", width: "100%", borderRadius: "8px", background: "#E5E7EB", marginTop: "auto" }} />
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
 
@@ -1040,7 +1090,22 @@ export default function Dashboard() {
           {/* Cards List */}
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             {osLoading ? (
-              <div style={{ padding: 48, textAlign: "center", color: "#6B7280" }}>Loading latest GitHub projects...</div>
+              <>
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="skeleton-pulse fade-in" style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
+                    <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "12px" }}>
+                      <div className="skeleton-pulse" style={{ height: "28px", width: "60%", borderRadius: "8px", background: "#E5E7EB" }} />
+                      <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
+                      <div className="skeleton-pulse" style={{ height: "24px", width: "80%", borderRadius: "8px", background: "#E5E7EB" }} />
+                    </div>
+                    <div style={{ flex: "1 1 300px", background: "#F3F4F6", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                      <div className="skeleton-pulse" style={{ height: "16px", width: "40%", borderRadius: "4px", background: "#E5E7EB" }} />
+                      <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
+                      <div className="skeleton-pulse" style={{ height: "40px", width: "100%", borderRadius: "8px", background: "#E5E7EB", marginTop: "auto" }} />
+                    </div>
+                  </div>
+                ))}
+              </>
             ) : osProjects.length > 0 ? (
               osProjects.map((repo, idx) => {
                 const suggestedIssues = [
