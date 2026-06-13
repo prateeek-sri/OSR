@@ -340,15 +340,15 @@ export default function Dashboard() {
 
         {/* Navigation Links */}
         <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "2px" }}>
-           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => { setView("skills"); router.push("/profile"); }} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
-           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => { if (state?.remediation_strategy) { setView("overview"); router.push("/profile"); } }} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
+           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
+           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => { if (state?.remediation_strategy) setView("overview"); }} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
            <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
-              if (state) { setView("opensource"); router.push("/dashboard"); }
+              if (state) setView("opensource");
            }} disabled={!state} icon={<Search size={16}/>} iconBg="#F3E8FF" iconColor="#8B5CF6" />
            <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
-              if (state?.dynamic_roadmap) { setView("roadmap"); router.push("/dashboard"); }
+              if (state?.dynamic_roadmap) setView("roadmap");
            }} disabled={!state?.dynamic_roadmap} icon={<Map size={16}/>} iconBg="#E0F2FE" iconColor="#0EA5E9" />
            
            <div style={{ marginTop: "24px", marginBottom: "8px", paddingLeft: "12px", fontSize: "0.75rem", color: "#9CA3AF", fontWeight: 600 }}>Preferences</div>
