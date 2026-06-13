@@ -29,22 +29,24 @@ const NAV_STEPS = [
   { id: "roadmap", label: "Roadmap" },
 ];
 
-function SidebarLink({ active, text, onClick, disabled, icon }: any) {
+function SidebarLink({ active, text, onClick, disabled, icon, iconBg, iconColor }: any) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       style={{
-        display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "12px 20px", 
-        border: "none", background: active ? "rgba(255,255,255,0.1)" : "transparent",
-        color: active ? "#fff" : disabled ? "#4B5563" : "#D1D5DB",
+        display: "flex", alignItems: "center", gap: "12px", width: "100%", padding: "8px 12px", 
+        border: "none", background: active ? "#F3F4F6" : "transparent",
+        color: active ? "#111827" : disabled ? "#9CA3AF" : "#4B5563",
         cursor: disabled ? "not-allowed" : "pointer", textAlign: "left", fontSize: "0.95rem", fontWeight: 500,
         borderRadius: "8px", transition: "all 0.2s"
       }}
-      onMouseOver={(e) => !disabled && !active && (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+      onMouseOver={(e) => !disabled && !active && (e.currentTarget.style.background = "#F9FAFB")}
       onMouseOut={(e) => !disabled && !active && (e.currentTarget.style.background = "transparent")}
     >
-      <span style={{ color: active ? "#3B82F6" : "inherit" }}>{icon}</span>
+      <div style={{ width: 28, height: 28, borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", background: iconBg || "transparent", color: iconColor || "inherit" }}>
+        {icon}
+      </div>
       {text}
     </button>
   );
@@ -315,65 +317,68 @@ export default function Dashboard() {
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Sidebar */}
-      <aside style={{ width: "260px", background: "#111827", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #1F2937" }}>
+      <aside style={{ width: "260px", background: "#FAFAFA", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB" }}>
         {/* Logo Area */}
-        <div style={{ height: "80px", display: "flex", alignItems: "center", padding: "0 24px", color: "#fff", borderBottom: "1px solid #1F2937" }}>
-          <div style={{ fontWeight: 800, fontSize: "1.5rem", display: "flex", alignItems: "center", gap: "6px", letterSpacing: "-0.5px" }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
+        <div style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent" }}>
+          <div style={{ fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
             IDR
           </div>
         </div>
 
         {/* Setup Progress Widget */}
-        <div style={{ padding: "24px", borderBottom: "1px solid #1F2937", marginBottom: "16px" }}>
-          <div style={{ fontSize: "0.85rem", color: "#9CA3AF", marginBottom: "8px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px" }}>Setup Progress</div>
-          <div style={{ fontSize: "1.2rem", fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: "12px" }}>
-             <div style={{ width: "40px", height: "40px", borderRadius: "50%", border: "3px solid #3B82F6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1rem" }}>
+        <div style={{ padding: "16px 20px", marginBottom: "8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", border: "1px solid #E5E7EB", background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
+             <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: "2px solid #8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem", fontWeight: 700, color: "#8B5CF6" }}>
                {state?.dynamic_roadmap ? "4" : state?.remediation_strategy ? "3" : state ? "2" : "1"}
              </div>
              <div>
-               <span style={{ fontSize: "1rem" }}>/ 4 Steps</span>
-               <div style={{ fontSize: "0.75rem", color: "#6B7280", fontWeight: 500, marginTop: "2px" }}>{state?.dynamic_roadmap ? "Roadmap ready!" : "Let's build your profile"}</div>
+               <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827" }}>Setup Progress</div>
+               <div style={{ fontSize: "0.7rem", color: "#6B7280", fontWeight: 500 }}>{state?.dynamic_roadmap ? "Roadmap ready!" : "Build your profile"}</div>
              </div>
           </div>
         </div>
 
         {/* Navigation Links */}
-        <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
-           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={18}/>} />
-           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => state?.remediation_strategy && setView("overview")} disabled={!state?.remediation_strategy} icon={<Target size={18}/>} />
+        <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "2px" }}>
+           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
+           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => state?.remediation_strategy && setView("overview")} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
            <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
               if (state) setView("opensource");
-           }} disabled={!state} icon={<Search size={18}/>} />
+           }} disabled={!state} icon={<Search size={16}/>} iconBg="#F3E8FF" iconColor="#8B5CF6" />
            <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
               if (state?.dynamic_roadmap) setView("roadmap");
-           }} disabled={!state?.dynamic_roadmap} icon={<Map size={18}/>} />
+           }} disabled={!state?.dynamic_roadmap} icon={<Map size={16}/>} iconBg="#E0F2FE" iconColor="#0EA5E9" />
            
-           <div style={{ marginTop: "32px", marginBottom: "8px", paddingLeft: "20px", fontSize: "0.75rem", color: "#6B7280", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 600 }}>Preferences</div>
-           <SidebarLink active={false} text="Settings" disabled={true} icon={<Settings size={18}/>} />
+           <div style={{ marginTop: "24px", marginBottom: "8px", paddingLeft: "12px", fontSize: "0.75rem", color: "#9CA3AF", fontWeight: 600 }}>Preferences</div>
+           <SidebarLink active={false} text="Settings" disabled={true} icon={<Settings size={16}/>} iconBg="#F3F4F6" iconColor="#6B7280" />
         </nav>
       </aside>
 
       {/* Main Column */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#fff" }}>
         
         {/* Top Header */}
-        <header style={{ height: "80px", display: "flex", justifyContent: "flex-end", alignItems: "center", padding: "0 40px", background: "#fff", borderBottom: "1px solid var(--border)", zIndex: 10, gap: "32px", flexShrink: 0 }}>
-          <div style={{ display: "flex", gap: "48px", fontWeight: 600, fontSize: "0.95rem", color: "#4B5563" }}>
-            <span style={{ cursor: "pointer" }}>Explore</span>
-            <span style={{ cursor: "pointer" }}>Help</span>
-            <span style={{ cursor: "pointer" }}>Pricing</span>
+        <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "#fff", borderBottom: "1px solid #E5E7EB", zIndex: 10, flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
+             <Search size={18} color="#9CA3AF" />
+             <input type="text" placeholder="Search projects, skills..." style={{ border: "none", outline: "none", fontSize: "0.95rem", width: "100%", maxWidth: "400px", color: "#111827" }} />
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <button onClick={resetAll} style={{ background: "transparent", color: "#111827", border: "1px solid #D1D5DB", padding: "10px 24px", borderRadius: "30px", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.background="#F3F4F6"} onMouseOut={e => e.currentTarget.style.background="transparent"}>
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            <button onClick={resetAll} style={{ background: "#F3F4F6", color: "#111827", border: "none", padding: "8px 16px", borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.background="#E5E7EB"} onMouseOut={e => e.currentTarget.style.background="#F3F4F6"}>
               New Analysis
             </button>
+            <Clock size={18} color="#9CA3AF" style={{ cursor: "pointer" }} />
             {session ? (
-              <button onClick={() => signOut()} style={{ background: "#F3F4F6", color: "#111827", border: "none", padding: "10px 24px", borderRadius: "30px", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer" }}>Sign out</button>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer" }} onClick={() => signOut()}>
+                {session.user?.name?.charAt(0) || "U"}
+              </div>
             ) : (
-              <button onClick={() => signIn("github")} style={{ background: "#2563EB", color: "#fff", border: "none", padding: "10px 24px", borderRadius: "30px", fontWeight: 600, fontSize: "0.9rem", cursor: "pointer" }}>Sign in</button>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#F3F4F6", color: "#6B7280", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} onClick={() => setIsLoginModalOpen(true)}>
+                <User size={16} />
+              </div>
             )}
           </div>
         </header>
@@ -886,17 +891,9 @@ export default function Dashboard() {
       {/* ═══ LOGIN MODAL (Brilliant Style) ═══ */}
       {isLoginModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)" }} onClick={() => setIsLoginModalOpen(false)}>
-          <div style={{ background: "#fff", width: "90%", maxWidth: "440px", borderRadius: "16px", padding: "48px 40px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: "#fff", width: "90%", maxWidth: "440px", borderRadius: "16px", padding: "72px 40px 64px 40px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
             
-            {/* Brilliant Logo Lookalike */}
-            <div style={{ width: "80px", height: "80px", position: "relative", marginBottom: "24px" }}>
-              <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "#10B981", borderRadius: "24px", transform: "rotate(-15deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{ width: "32px", height: "32px", background: "#fff", borderRadius: "8px", transform: "rotate(15deg)", position: "relative" }}>
-                   <div style={{ position: "absolute", top: 4, left: 4, width: 12, height: 12, background: "#111", borderRadius: 2 }} />
-                </div>
-              </div>
-              <div style={{ position: "absolute", top: "10px", left: "-20px", width: "120%", height: "120%", background: "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(255,255,255,0) 70%)", zIndex: -1 }} />
-            </div>
+            <BrilliantLogo />
 
             <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111", marginBottom: "32px" }}>Log in</h2>
 
@@ -910,12 +907,7 @@ export default function Dashboard() {
               Log in with GitHub
             </button>
 
-            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginTop: "32px", fontSize: "0.95rem", fontWeight: 600 }}>
-              <a href="#" style={{ color: "#111", textDecoration: "underline", textUnderlineOffset: "4px" }} onClick={e => e.preventDefault()}>Reset password</a>
-              <div style={{ color: "#111" }}>
-                New user? <a href="#" style={{ color: "#3B82F6", textDecoration: "underline", textUnderlineOffset: "4px" }} onClick={e => e.preventDefault()}>Sign up</a>
-              </div>
-            </div>
+
 
             <p style={{ marginTop: "40px", fontSize: "0.7rem", color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 }}>
               This site is protected by reCAPTCHA and the Google Privacy<br/>Policy and Terms of Service apply
@@ -924,6 +916,33 @@ export default function Dashboard() {
         </div>
       )}
 
+    </div>
+  );
+}
+
+function BrilliantLogo() {
+  const dotRef = React.useRef<HTMLDivElement>(null);
+  
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dotRef.current) return;
+      // Calculate cursor position relative to screen center, max travel ~8px
+      const x = ((e.clientX / window.innerWidth) - 0.5) * 16;
+      const y = ((e.clientY / window.innerHeight) - 0.5) * 16;
+      dotRef.current.style.transform = `translate(${x}px, ${y}px)`;
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  return (
+    <div style={{ width: "96px", height: "96px", position: "relative", marginBottom: "32px" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "#10B981", borderRadius: "32px", transform: "rotate(-15deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ width: "40px", height: "40px", background: "#fff", borderRadius: "12px", transform: "rotate(15deg)", position: "relative" }}>
+           <div ref={dotRef} style={{ position: "absolute", top: 12, left: 12, width: 16, height: 16, background: "#111", borderRadius: 4, transition: "transform 0.1s ease-out" }} />
+        </div>
+      </div>
+      <div style={{ position: "absolute", top: "10px", left: "-20px", width: "120%", height: "120%", background: "radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(255,255,255,0) 70%)", zIndex: -1 }} />
     </div>
   );
 }
