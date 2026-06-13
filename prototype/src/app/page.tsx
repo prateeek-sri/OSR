@@ -97,9 +97,6 @@ export default function Home() {
               </div>
               
               <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                {session && (
-                  <a href="#" onClick={(e) => { e.preventDefault(); setView("skills"); router.push("/dashboard"); }} style={{ color: "#4DD0E1", textDecoration: "underline", cursor: "pointer", fontSize: "0.95rem", fontWeight: 600 }}>or go to dashboard</a>
-                )}
                 <button type="submit" disabled={!localUsername && !githubUsername} style={{ width: "56px", height: "56px", borderRadius: "50%", border: "none", background: "#222", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: (!localUsername && !githubUsername) ? "not-allowed" : "pointer", transition: "all 0.2s" }}>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
                 </button>
