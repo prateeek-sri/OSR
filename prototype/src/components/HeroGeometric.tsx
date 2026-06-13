@@ -32,49 +32,55 @@ export default function HeroGeometric({
         </defs>
 
         {/* Big Wavy Pipes using Halftone Pattern and Gradients */}
-        <g opacity="0.8" style={{ animation: `pulse ${4 / speed}s ease-in-out infinite alternate` }}>
+        <g opacity="0.8">
           {/* Pipe 1 */}
-          <path 
-            d="M -100 -100 Q 300 100 200 500 T 500 1200" 
-            fill="none" 
-            stroke="url(#halftone)" 
-            strokeWidth="180" 
-            strokeLinecap="round" 
-          />
-          <path 
-            d="M -100 -100 Q 300 100 200 500 T 500 1200" 
-            fill="none" 
-            stroke="url(#fadeGradient)" 
-            strokeWidth="180" 
-            strokeLinecap="round" 
-            opacity="0.5"
-          />
+          <g style={{ animation: `drift1 ${3 / speed}s ease-in-out infinite alternate` }}>
+            <path 
+              d="M -100 -100 Q 300 100 200 500 T 500 1200" 
+              fill="none" 
+              stroke="url(#halftone)" 
+              strokeWidth="100" 
+              strokeLinecap="round" 
+            />
+            <path 
+              d="M -100 -100 Q 300 100 200 500 T 500 1200" 
+              fill="none" 
+              stroke="url(#fadeGradient)" 
+              strokeWidth="100" 
+              strokeLinecap="round" 
+              opacity="0.5"
+            />
+          </g>
 
           {/* Pipe 2 */}
-          <path 
-            d="M 600 -200 Q 400 400 800 600 T 1500 1000" 
-            fill="none" 
-            stroke="url(#halftone)" 
-            strokeWidth="240" 
-            strokeLinecap="round" 
-          />
-          <path 
-            d="M 600 -200 Q 400 400 800 600 T 1500 1000" 
-            fill="none" 
-            stroke="url(#fadeGradient)" 
-            strokeWidth="240" 
-            strokeLinecap="round" 
-            opacity="0.4"
-          />
+          <g style={{ animation: `drift2 ${4 / speed}s ease-in-out infinite alternate` }}>
+            <path 
+              d="M 600 -200 Q 400 400 800 600 T 1500 1000" 
+              fill="none" 
+              stroke="url(#halftone)" 
+              strokeWidth="140" 
+              strokeLinecap="round" 
+            />
+            <path 
+              d="M 600 -200 Q 400 400 800 600 T 1500 1000" 
+              fill="none" 
+              stroke="url(#fadeGradient)" 
+              strokeWidth="140" 
+              strokeLinecap="round" 
+              opacity="0.4"
+            />
+          </g>
 
           {/* Pipe 3 */}
-          <path 
-            d="M -200 800 Q 400 700 800 1200" 
-            fill="none" 
-            stroke="url(#halftone)" 
-            strokeWidth="120" 
-            strokeLinecap="round" 
-          />
+          <g style={{ animation: `drift3 ${3.5 / speed}s ease-in-out infinite alternate` }}>
+            <path 
+              d="M -200 800 Q 400 700 800 1200" 
+              fill="none" 
+              stroke="url(#halftone)" 
+              strokeWidth="80" 
+              strokeLinecap="round" 
+            />
+          </g>
         </g>
       </svg>
       
@@ -91,9 +97,17 @@ export default function HeroGeometric({
       }} />
       
       <style>{`
-        @keyframes pulse {
-          0% { transform: scale(1); }
-          100% { transform: scale(1.02); }
+        @keyframes drift1 {
+          0% { transform: translate(0px, 0px) scale(1); }
+          100% { transform: translate(15px, 20px) scale(1.02); }
+        }
+        @keyframes drift2 {
+          0% { transform: translate(0px, 0px) scale(1); }
+          100% { transform: translate(-20px, 15px) scale(1.03); }
+        }
+        @keyframes drift3 {
+          0% { transform: translate(0px, 0px) scale(1); }
+          100% { transform: translate(20px, -15px) scale(1.02); }
         }
       `}</style>
 
