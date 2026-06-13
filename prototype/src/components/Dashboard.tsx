@@ -368,7 +368,7 @@ export default function Dashboard() {
         <main style={{ flex: 1, padding: "48px 64px", overflowY: "auto", position: "relative" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
             <h1 style={{ fontSize: "2.2rem", fontWeight: 800, marginBottom: "8px", color: "var(--text-primary)", letterSpacing: "-0.5px" }}>
-               {view === "skills" ? `Welcome to your Dashboard, ${session?.user?.name?.split(" ")[0] || githubUsername || username || "Developer"}` :
+               {view === "skills" ? `Welcome to your Dashboard, ${state?.raw_github_metadata.profile?.name?.split(" ")[0] || username || session?.user?.name?.split(" ")[0] || "Developer"}` :
                 view === "overview" ? "Gap Analysis Results" :
                 view === "opensource" ? "Open Source Matchmaker" :
                 view === "roadmap" ? "Your Career Roadmap" : "Dashboard"}

@@ -9,7 +9,7 @@ import { useAppState } from "@/components/Providers";
 export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
-  const { setUsername, setView, setTargetRole } = useAppState();
+  const { setUsername, setView, setTargetRole, setState, setStep } = useAppState();
   const [localUsername, setLocalUsername] = useState("");
 
   const githubUsername = (session as unknown as Record<string, unknown>)?.githubUsername as string || "";
@@ -19,6 +19,8 @@ export default function Home() {
     const finalUsername = localUsername.trim() || githubUsername;
     if (finalUsername) {
       setUsername(finalUsername);
+      setState(null);
+      setStep("idle");
       setView("skills");
       router.push("/dashboard");
     }
