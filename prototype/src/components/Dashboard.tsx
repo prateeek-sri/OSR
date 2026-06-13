@@ -793,144 +793,109 @@ export default function Dashboard() {
 
       {/* ═══ OPEN SOURCE FINDER VIEW ═══ */}
       {view === "opensource" && state && !isRunning && (
-        <div className="os-finder-layout fade-in" style={{ marginBottom: 48 }}>
+        <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1000px", margin: "0 auto", marginBottom: 48 }}>
           
-          {/* Sidebar Filters */}
-          <aside className="os-sidebar">
-            <div className="os-sidebar-header">
-              <h3 style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "1.1rem" }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
-                Filters
-              </h3>
-              <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 4 }}>Configure your search filters</p>
-            </div>
-            
-            <div className="os-filter-group">
-              <label>Language</label>
-              <select className="os-select" value={osLanguage} onChange={(e) => {
-                setOsLanguage(e.target.value);
-                fetchTrendingOS(osTimeframe, e.target.value);
-              }}>
-                <option value="Any">Any</option>
-                {Object.keys(state.raw_github_metadata.languages).map(lang => (
-                  <option key={lang} value={lang}>{lang}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="os-filter-group">
-              <label>Minimum Stars</label>
-              <select className="os-select"><option>Any</option><option>100+</option><option>1000+</option></select>
-            </div>
-            
-            <div className="os-filter-group">
-              <label>Last Updated</label>
-              <select className="os-select"><option>Any time</option><option>Past week</option></select>
-            </div>
-            
-            <div className="os-filter-group">
-              <label>Minimum Open Issues</label>
-              <select className="os-select"><option>Any</option><option>10+</option></select>
-            </div>
-          </aside>
+          {/* Horizontal Filters */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", overflowX: "auto", padding: "4px 0" }}>
+             <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "1.05rem", fontWeight: 600, color: "#111827", marginRight: "8px" }}>
+               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+               Filters
+             </div>
 
-          {/* Main Content */}
-          <div className="os-main">
-            <div className="os-search-bar">
-              <h4 style={{ marginBottom: 8, fontSize: "0.9rem", color: "var(--text-primary)" }}>Search Projects</h4>
-              <div style={{ display: "flex", gap: 12 }}>
-                <div className="input-group" style={{ flex: 1 }}>
-                  <input className="input-field" style={{ background: "#fff", borderColor: "var(--border)" }} placeholder={`Search for ${Object.keys(state.raw_github_metadata.languages)[0] || 'projects'}...`} />
-                </div>
-                <button className="btn-secondary"><Search size={16} /> Search</button>
-              </div>
-            </div>
+             {/* Language Filter */}
+             <div style={{ position: "relative" }}>
+               <div style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none", color: "#111827" }}>
+                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path><path d="M2 12h20"></path></svg>
+               </div>
+               <select 
+                 value={osLanguage} 
+                 onChange={(e) => {
+                   setOsLanguage(e.target.value);
+                   fetchTrendingOS(osTimeframe, e.target.value);
+                 }}
+                 style={{ appearance: "none", background: "#E5E7EB", border: "none", borderRadius: "20px", padding: "8px 16px 8px 40px", fontSize: "0.95rem", fontWeight: 500, color: "#111827", cursor: "pointer", outline: "none", paddingRight: "32px" }}
+               >
+                 <option value="Any">Language</option>
+                 {Object.keys(state.raw_github_metadata.languages).map(lang => (
+                   <option key={lang} value={lang}>{lang}</option>
+                 ))}
+               </select>
+             </div>
+          </div>
 
-            <div className="os-trending-header">
-              <h3>Trending Projects <span style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontWeight: "normal" }}>({osProjects.length})</span></h3>
-              <div className="os-tabs">
-                <button className={`os-tab ${osTimeframe === 'daily' ? 'active' : ''}`} onClick={() => fetchTrendingOS('daily')}>Daily</button>
-                <button className={`os-tab ${osTimeframe === 'weekly' ? 'active' : ''}`} onClick={() => fetchTrendingOS('weekly')}>Weekly</button>
-                <button className={`os-tab ${osTimeframe === 'monthly' ? 'active' : ''}`} onClick={() => fetchTrendingOS('monthly')}>Monthly</button>
-              </div>
-            </div>
+          <h3 style={{ fontSize: "1.2rem", color: "#111827", fontWeight: 600, margin: 0 }}>Trending Projects <span style={{ color: "#6B7280", fontWeight: 400 }}>({osProjects.length})</span></h3>
 
-            <div className="os-project-list">
-              {osLoading ? (
-                <div style={{ padding: 48, textAlign: "center", color: "var(--text-muted)" }}>Loading latest GitHub projects...</div>
-              ) : osProjects.length > 0 ? (
-                osProjects.map((repo, idx) => {
-                  const suggestedIssues = [
-                    "Fix responsive layout bugs",
-                    "Improve error handling in API",
-                    "Update outdated documentation",
-                    "Add unit tests for core module",
-                    "Refactor redundant components",
-                    "Resolve dependency vulnerabilities"
-                  ];
-                  const suggestedDescriptions = [
-                    "This issue involves digging into the UI CSS to resolve flexbox alignment issues on mobile viewports. Ideal for beginners.",
-                    "Help improve test coverage by adding Jest unit tests to the core utility functions. Good way to learn the codebase.",
-                    "The current API documentation is missing examples for the v2 endpoints. This requires updating markdown files in the /docs folder.",
-                    "We need to replace the deprecated dependencies with native JavaScript array methods to reduce bundle size.",
-                    "There is a minor race condition in the data-fetching hook when the component mounts twice in strict mode. Needs debugging.",
-                    "Users have reported high memory usage on the dashboard. Help profile and optimize the React component re-renders."
-                  ];
-                  
-                  const suggestedIssue = suggestedIssues[idx % suggestedIssues.length];
-                  const suggestedDesc = suggestedDescriptions[idx % suggestedDescriptions.length];
-                  
-                  return (
-                  <div key={repo.id} className="os-project-card" style={{ display: "flex", gap: "24px", alignItems: "stretch" }}>
+          {/* Cards List */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            {osLoading ? (
+              <div style={{ padding: 48, textAlign: "center", color: "#6B7280" }}>Loading latest GitHub projects...</div>
+            ) : osProjects.length > 0 ? (
+              osProjects.map((repo, idx) => {
+                const suggestedIssues = [
+                  "Fix responsive layout bugs",
+                  "Improve error handling in API",
+                  "Update outdated documentation",
+                  "Add unit tests for core module",
+                  "Refactor redundant components",
+                  "Resolve dependency vulnerabilities"
+                ];
+                const suggestedDescriptions = [
+                  "This issue involves digging into the UI CSS to resolve flexbox alignment issues on mobile viewports. Ideal for beginners.",
+                  "Help improve test coverage by adding Jest unit tests to the core utility functions. Good way to learn the codebase.",
+                  "The current API documentation is missing examples for the v2 endpoints. This requires updating markdown files in the /docs folder.",
+                  "We need to replace the deprecated dependencies with native JavaScript array methods to reduce bundle size.",
+                  "There is a minor race condition in the data-fetching hook when the component mounts twice in strict mode. Needs debugging.",
+                  "Users have reported high memory usage on the dashboard. Help profile and optimize the React component re-renders."
+                ];
+                
+                const suggestedIssue = suggestedIssues[idx % suggestedIssues.length];
+                const suggestedDesc = suggestedDescriptions[idx % suggestedDescriptions.length];
+                
+                return (
+                  <div key={repo.id} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", flexDirection: "row", flexWrap: "wrap" }}>
                     
                     {/* Left Side: Repo Info & Stats */}
-                    <div className="os-project-info" style={{ flex: 1.5, display: "flex", flexDirection: "column", paddingRight: 0 }}>
-                      <h4 className="os-project-title"><a href={repo.html_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text-primary)", textDecoration: "none" }}>{repo.full_name}</a></h4>
-                      <p className="os-project-desc">{repo.description || "No description provided."}</p>
+                    <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                      <h4 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 12px 0" }}>
+                        <a href={repo.html_url} target="_blank" rel="noopener noreferrer" style={{ color: "#111827", textDecoration: "none" }}>{repo.full_name}</a>
+                      </h4>
                       
-                      <div className="os-project-tags" style={{ marginBottom: "auto", paddingBottom: "24px" }}>
-                        <span className="os-tag lang">{repo.language || "Unknown"}</span>
-                        <span className="os-tag outline">Good for Contribution</span>
-                        {repo.open_issues_count > 0 && <span className="os-tag status"><span className="dot"></span> {repo.open_issues_count} Issues</span>}
+                      <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
+                        <span style={{ background: "#1D4ED8", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: 500 }}>{repo.language || "TypeScript"}</span>
+                        <span style={{ background: "#10B981", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: 500 }}>Good for Contribution</span>
+                        {repo.open_issues_count > 0 && <span style={{ background: "#10B981", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: 500 }}>{repo.open_issues_count} Issues</span>}
                       </div>
 
-                      <div className="os-project-stats" style={{ display: "flex", gap: "16px", alignItems: "center", justifyContent: "flex-start", paddingTop: "16px", borderTop: "1px solid var(--border)" }}>
-                        <button className="roadmap-btn ghost" onClick={() => window.open(repo.html_url, '_blank')} style={{ padding: "6px 12px", background: "var(--bg-elevated)", color: "var(--text-primary)" }}>
-                          View Repository ↗
-                        </button>
-                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> {repo.stargazers_count >= 1000 ? (repo.stargazers_count / 1000).toFixed(1) + 'k' : repo.stargazers_count}</span>
-                        <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg> {repo.forks_count >= 1000 ? (repo.forks_count / 1000).toFixed(1) + 'k' : repo.forks_count}</span>
+                      <div style={{ display: "flex", gap: "16px", alignItems: "center", fontSize: "1rem", color: "#4B5563" }}>
+                        <span><strong style={{ color: "#111827", fontWeight: 700 }}>{repo.stargazers_count >= 1000 ? (repo.stargazers_count / 1000).toFixed(1) + 'k' : repo.stargazers_count}</strong> Stars</span>
+                        <span><strong style={{ color: "#111827", fontWeight: 700 }}>{repo.forks_count >= 1000 ? (repo.forks_count / 1000).toFixed(1) + 'k' : repo.forks_count}</strong> Forks</span>
                       </div>
                     </div>
 
                     {/* Right Side: Suggested Issue Box */}
-                    <div style={{ flex: 1, background: "var(--bg-primary)", border: "1px solid var(--border)", borderRadius: "8px", padding: "16px", display: "flex", flexDirection: "column" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 600 }}>Suggested Issue</span>
-                        <span style={{ fontSize: "0.7rem", background: "rgba(16,185,129,0.1)", color: "var(--success)", padding: "2px 8px", borderRadius: "10px", border: "1px solid rgba(16,185,129,0.2)" }}>Open</span>
-                      </div>
+                    <div style={{ flex: "1 1 300px", background: "#F0FDF4", border: "1px solid #10B981", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column" }}>
+                      <span style={{ fontSize: "0.75rem", color: "#111827", textTransform: "uppercase", letterSpacing: "0.5px", fontWeight: 700, marginBottom: "12px" }}>Suggested Issue</span>
                       
-                      <h5 style={{ fontSize: "0.95rem", color: "var(--text-primary)", marginBottom: "8px", lineHeight: 1.4 }}>{suggestedIssue}</h5>
-                      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "auto", lineHeight: 1.5 }}>
-                        {suggestedDesc}
+                      <p style={{ fontSize: "0.95rem", color: "#111827", margin: "0 0 16px 0", lineHeight: 1.5, flex: 1 }}>
+                        <strong style={{ fontWeight: 700 }}>{suggestedIssue}:</strong> {suggestedDesc}
                       </p>
                       
-                      <button className="btn-secondary" style={{ width: "100%", marginTop: "16px", padding: "8px", fontSize: "0.8rem", justifyContent: "center" }} onClick={() => window.open(`${repo.html_url}/issues?q=is%3Aissue+is%3Aopen`, '_blank')}>
-                        View Issue on GitHub ↗
-                      </button>
+                      <div style={{ borderTop: "1px solid rgba(16,185,129,0.2)", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <a href={repo.html_url + "/issues"} target="_blank" rel="noopener noreferrer" style={{ color: "#111827", fontSize: "0.95rem", fontWeight: 700, textDecoration: "none", display: "flex", alignItems: "center", width: "100%", justifyContent: "space-between" }}>
+                          View Issue on GitHub
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                        </a>
+                      </div>
                     </div>
-
                   </div>
-                )})
-              ) : (
-                <div style={{ padding: 48, textAlign: "center", color: "var(--text-muted)" }}>No trending projects found for this timeframe.</div>
-              )}
-            </div>
-
-            {/* Removed standalone Blueprint, as we replaced the Matchmaker specific logic with real GitHub Repo links */}
+                );
+              })
+            ) : (
+              <div style={{ padding: 48, textAlign: "center", color: "#6B7280" }}>No trending projects found for this timeframe.</div>
+            )}
             
-            <button className="btn-secondary" style={{ marginTop: 24 }} onClick={() => setView("skills")}>
-              ← Back
+            <button className="btn-secondary" style={{ marginTop: 24, alignSelf: "flex-start", padding: "8px 24px" }} onClick={() => setView("skills")}>
+              ← Back to Skills
             </button>
           </div>
         </div>
