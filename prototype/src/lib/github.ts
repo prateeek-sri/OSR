@@ -63,6 +63,7 @@ export async function ingestGitHubProfile(
     fetchJSON(`${GITHUB_API}/users/${username}/repos?per_page=100&sort=pushed&type=owner`),
   ]);
 
+  console.log(profileData);
   const profile = {
     name: profileData.name,
     bio: profileData.bio,
@@ -75,8 +76,8 @@ export async function ingestGitHubProfile(
   };
 
   // Filter forks, map to our type, and KEEP ONLY TOP 15 to avoid LLM token limits
-  const nonForkedRepos: Repository[] = repos
-    .filter((r: Record<string, unknown>) => !r.fork)
+  const allNonForked = repos.filter((r: Record<string, unknown>) => !r.fork);
+  const nonForkedRepos: Repository[] = allNonForked
     .slice(0, 15)
     .map((repo: Record<string, unknown>) => ({
       name: repo.name as string,
@@ -97,18 +98,16 @@ export async function ingestGitHubProfile(
       default_branch: repo.default_branch as string,
     }));
 
-  // 2. Use the primary language from repo listing (already available, 0 API calls)
+  // 2. We will calculate aggregatedLanguages from detailed fetch
   const aggregatedLanguages: Record<string, number> = {};
-  for (const repo of nonForkedRepos) {
-    if (repo.language) {
-      aggregatedLanguages[repo.language] = (aggregatedLanguages[repo.language] || 0) + repo.size;
-    }
-  }
 
-  // 3. Fetch detailed languages + package.json for top 5 repos ONLY (max 10 API calls)
-  const topRepos = nonForkedRepos.slice(0, 5);
+  const now = new Date();
+  const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+  const commitInsights: CommitInsight[] = [];
+
+  // 3. Fetch detailed languages for all 15 repos, and package.json/commits for top 5 repos in parallel
   await Promise.all(
-    topRepos.map(async (repo) => {
+    nonForkedRepos.map(async (repo, index) => {
       try {
         // Detailed languages
         const langs = await fetchJSON(repo.languages_url);
@@ -116,47 +115,108 @@ export async function ingestGitHubProfile(
         Object.entries(langs).forEach(([lang, bytes]) => {
           aggregatedLanguages[lang] = (aggregatedLanguages[lang] || 0) + (bytes as number);
         });
-      } catch { /* skip */ }
-
-      try {
-        // Dependencies from package.json
-        const content = await fetchJSON(
-          `${GITHUB_API}/repos/${username}/${repo.name}/contents/package.json`
-        );
-        if (content.content) {
-          const decoded = atob(content.content.replace(/\n/g, ""));
-          const pkg = JSON.parse(decoded);
-          repo.dependencies = [
-            ...Object.keys(pkg.dependencies || {}),
-            ...Object.keys(pkg.devDependencies || {}),
-          ];
-
-          // Infer tests from devDependencies
-          const testDeps = ["jest", "vitest", "mocha", "cypress", "playwright", "@testing-library"];
-          repo.has_tests = repo.dependencies.some((d) =>
-            testDeps.some((t) => d.includes(t))
-          );
+      } catch {
+        // Fallback: if detailed fetch fails, estimate from repo.language and size
+        if (repo.language) {
+          aggregatedLanguages[repo.language] = (aggregatedLanguages[repo.language] || 0) + (repo.size * 1024);
         }
-      } catch { /* no package.json */ }
+      }
+
+      // Fetch package.json and commits only for the top 5 repos to avoid API rate limits
+      if (index < 5) {
+        try {
+          // Dependencies from package.json
+          const content = await fetchJSON(
+            `${GITHUB_API}/repos/${username}/${repo.name}/contents/package.json`
+          );
+          if (content.content) {
+            const decoded = atob(content.content.replace(/\n/g, ""));
+            const pkg = JSON.parse(decoded);
+            repo.dependencies = [
+              ...Object.keys(pkg.dependencies || {}),
+              ...Object.keys(pkg.devDependencies || {}),
+            ];
+
+            // Infer tests from devDependencies
+            const testDeps = ["jest", "vitest", "mocha", "cypress", "playwright", "@testing-library"];
+            repo.has_tests = repo.dependencies.some((d) =>
+              testDeps.some((t) => d.includes(t))
+            );
+          }
+        } catch { /* no package.json */ }
+
+        try {
+          // Fetch real commits for accurate insights
+          const commits = await fetchJSON(
+            `${GITHUB_API}/repos/${username}/${repo.name}/commits?author=${encodeURIComponent(username)}&per_page=100`
+          );
+          
+          if (Array.isArray(commits)) {
+            const total_commits = commits.length;
+            let recent_activity = false;
+            let freq: CommitInsight["commit_frequency"] = "inactive";
+
+            if (commits.length > 0 && commits[0].commit?.author?.date) {
+              const latestDate = new Date(commits[0].commit.author.date);
+              recent_activity = latestDate > ninetyDaysAgo;
+              const daysSincePush = (now.getTime() - latestDate.getTime()) / (1000 * 60 * 60 * 24);
+              if (daysSincePush < 7) freq = "high";
+              else if (daysSincePush < 30) freq = "medium";
+              else if (daysSincePush < 90) freq = "low";
+            }
+
+            commitInsights.push({
+              repo_name: repo.name,
+              total_commits,
+              recent_activity,
+              commit_frequency: freq,
+            });
+          } else {
+            throw new Error("Invalid commits response");
+          }
+        } catch {
+          // Fallback to heuristic if commits endpoint fails
+          const pushed = new Date(repo.pushed_at);
+          const recent = pushed > ninetyDaysAgo;
+          const daysSincePush = (now.getTime() - pushed.getTime()) / (1000 * 60 * 60 * 24);
+          
+          let freq: CommitInsight["commit_frequency"] = "inactive";
+          if (daysSincePush < 7) freq = "high";
+          else if (daysSincePush < 30) freq = "medium";
+          else if (daysSincePush < 90) freq = "low";
+
+          const estimatedCommits = Math.max(1, Math.floor(repo.size / 100));
+
+          commitInsights.push({
+            repo_name: repo.name,
+            total_commits: estimatedCommits,
+            recent_activity: recent,
+            commit_frequency: freq,
+          });
+        }
+      }
     })
   );
 
-  // 4. Commit insights from repo data (0 API calls — infer from pushed_at)
-  const now = new Date();
-  const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-  const commitInsights: CommitInsight[] = nonForkedRepos.slice(0, 10).map((repo) => {
-    const pushed = new Date(repo.pushed_at);
-    const recent = pushed > ninetyDaysAgo;
-    const daysSincePush = (now.getTime() - pushed.getTime()) / (1000 * 60 * 60 * 24);
-    const freq: CommitInsight["commit_frequency"] =
-      daysSincePush < 7 ? "high" : daysSincePush < 30 ? "medium" : daysSincePush < 90 ? "low" : "inactive";
+  // For any of the top 5 repos that did not get commits pushed, map them
+  const capturedNames = new Set(commitInsights.map(c => c.repo_name));
+  nonForkedRepos.slice(0, 5).forEach(repo => {
+    if (!capturedNames.has(repo.name)) {
+      const pushed = new Date(repo.pushed_at);
+      const recent = pushed > ninetyDaysAgo;
+      const daysSincePush = (now.getTime() - pushed.getTime()) / (1000 * 60 * 60 * 24);
+      let freq: CommitInsight["commit_frequency"] = "inactive";
+      if (daysSincePush < 7) freq = "high";
+      else if (daysSincePush < 30) freq = "medium";
+      else if (daysSincePush < 90) freq = "low";
 
-    return {
-      repo_name: repo.name,
-      total_commits: 1, // We don't fetch this anymore for speed
-      recent_activity: recent,
-      commit_frequency: freq,
-    };
+      commitInsights.push({
+        repo_name: repo.name,
+        total_commits: Math.max(1, Math.floor(repo.size / 100)),
+        recent_activity: recent,
+        commit_frequency: freq,
+      });
+    }
   });
 
   return {

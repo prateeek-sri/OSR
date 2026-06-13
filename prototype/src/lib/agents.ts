@@ -2,7 +2,7 @@
 // Agent Pipeline — All 6 agents in a sequential graph
 // ============================================================
 
-import { callGemini } from "./gemini";
+import { callNvidia, MODELS } from "./nvidia";
 import { ingestGitHubProfile, searchGitHubIssues } from "./github";
 import type {
   GlobalState,
@@ -55,73 +55,42 @@ export async function runIngestionAgent(
 export async function runProfileAnalysisAgent(
   state: GlobalState
 ): Promise<GlobalState> {
-  // 🚀 FAST & FREE HEURISTIC (No Gemini API needed for this step anymore)
-  const technical_proficiency: TechnicalProficiency = {};
-  let totalBytes = 0;
-  
-  Object.values(state.raw_github_metadata.languages).forEach(b => totalBytes += b);
+  const systemPrompt = `You are a Senior Tech Lead evaluating a candidate's GitHub profile. 
+Analyze their codebase statistics and output a structured JSON assessing their technical proficiency.
 
-  // Map languages to scores based on byte percentage
-  Object.entries(state.raw_github_metadata.languages).forEach(([lang, bytes]) => {
-    const percentage = (bytes / totalBytes) * 100;
-    
-    // Ignore random tiny files (like a Dockerfile from a cloned template)
-    if (percentage < 3) return;
+Return ONLY valid JSON:
+{
+  "technical_proficiency": {
+    "skill_name_in_lowercase": {
+      "score": <number 0-100>,
+      "evidence": ["<Why they got this score based on bytes/repos>"],
+      "category": "<language|framework|tool|concept>"
+    }
+  },
+  "employability_index": <number 0-100 based on overall strength>,
+  "summary": "<2-3 sentence technical summary of their profile>"
+}`;
 
-    let score = 50; // baseline for small but present languages
-    if (percentage > 40) score = 92;
-    else if (percentage > 15) score = 78;
-    else if (percentage > 5) score = 65;
-
-    technical_proficiency[lang] = {
-      score,
-      evidence: [`Primary language (${percentage.toFixed(1)}% of codebase)`],
-      category: "language"
-    };
-  });
-
-  // Infer frameworks from dependencies
   const allDeps = new Set<string>();
   state.raw_github_metadata.repositories.forEach(r => r.dependencies?.forEach(d => allDeps.add(d)));
-  
-  const knownFrameworks: Record<string, "language" | "framework" | "tool" | "concept"> = {
-    react: "framework",
-    "next": "framework",
-    express: "framework",
-    mongoose: "tool",
-    tailwindcss: "tool",
-    jest: "tool"
-  };
 
-  allDeps.forEach(dep => {
-    Object.keys(knownFrameworks).forEach(fw => {
-      if (dep.includes(fw)) {
-        technical_proficiency[fw] = {
-          score: 85,
-          evidence: [`Used in package.json dependencies`],
-          category: knownFrameworks[fw]
-        };
-      }
-    });
-  });
+  const userData = JSON.stringify({
+    languages: state.raw_github_metadata.languages,
+    total_repos: state.raw_github_metadata.repositories.length,
+    dependencies: Array.from(allDeps)
+  }, null, 2);
 
-  let baselineScore = 0;
-  const skills = Object.values(technical_proficiency);
-  if (skills.length > 0) {
-    const avgScore = skills.reduce((sum, skill) => sum + skill.score, 0) / skills.length;
-    const repoBonus = Math.min(state.raw_github_metadata.repositories.length * 1.5, 25);
-    baselineScore = Math.round(Math.min(Math.max(avgScore * 0.75 + repoBonus, 45), 96));
-  } else {
-    baselineScore = 50;
-  }
+  const response = await callNvidia(MODELS.PROFILE_ANALYSIS, systemPrompt, userData, true, 2000);
+  const cleanResponse = response.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  const parsed = JSON.parse(cleanResponse);
 
   return {
     ...state,
     analysis_results: {
       ...state.analysis_results,
-      technical_proficiency,
-      employability_index: baselineScore,
-      summary: `Analyzed ${state.raw_github_metadata.repositories.length} repositories. Strong foundation in ${Object.keys(state.raw_github_metadata.languages).slice(0, 2).join(" and ")}.`,
+      technical_proficiency: parsed.technical_proficiency || {},
+      employability_index: parsed.employability_index || 50,
+      summary: parsed.summary || "Profile analyzed.",
     },
   };
 }
@@ -182,7 +151,7 @@ Be specific and actionable. Maximum 6 gaps, minimum 2.`;
     2
   );
 
-  const response = await callGemini(systemPrompt, userData);
+  const response = await callNvidia(MODELS.GAP_ANALYSIS, systemPrompt, userData, true, 2000);
   const cleanResponse = response.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
   const parsed = JSON.parse(cleanResponse);
 
@@ -319,7 +288,7 @@ Return ONLY valid JSON:
     gap_being_addressed: issue.gap_addressed,
   });
 
-  const response = await callGemini(systemPrompt, issueData);
+  const response = await callNvidia(MODELS.COACHING, systemPrompt, issueData, true, 2500);
   const cleanResponse = response.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
   const parsed = JSON.parse(cleanResponse);
 
@@ -396,7 +365,7 @@ Generate 5-8 milestones total. Make them specific, actionable, and always includ
     target_role: state.user_context.target_role,
   });
 
-  const response = await callGemini(systemPrompt, userData);
+  const response = await callNvidia(MODELS.ROADMAP, systemPrompt, userData, true, 3000);
   const cleanResponse = response.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
   const parsed = JSON.parse(cleanResponse);
 

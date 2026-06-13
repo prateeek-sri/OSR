@@ -395,58 +395,252 @@ export default function Dashboard() {
 
       {/* ═══ SKELETON LOADER ═══ */}
       {isRunning && (
-        <div className="fade-in" style={{ padding: "24px 0", width: "100%", display: "flex", flexDirection: "column", gap: "24px", opacity: 0.6 }}>
+        <div className="fade-in" style={{ padding: "24px 0", width: "100%", display: "flex", flexDirection: "column", gap: "24px", maxWidth: "1000px", margin: "0 auto" }}>
+
+          {/* ── PROFILE / SKILLS SKELETON ── */}
           {view === "skills" && (
             <>
-              {/* Profile setup / Stats loader */}
-              <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="skeleton-pulse" style={{ flex: 1, minWidth: "200px", height: "120px", borderRadius: "16px", background: "#E5E7EB" }} />
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: "24px", flexDirection: "row", flexWrap: "wrap", marginTop: "16px" }}>
-                <div className="skeleton-pulse" style={{ flex: 1, minWidth: "300px", height: "340px", borderRadius: "16px", background: "#E5E7EB" }} />
-                <div className="skeleton-pulse" style={{ flex: 2, minWidth: "300px", height: "340px", borderRadius: "16px", background: "#E5E7EB" }} />
-              </div>
-            </>
-          )}
-          {(view === "overview" || view === "gaps") && (
-            <>
-              {/* Gap Analysis Loader */}
-              <div className="skeleton-pulse" style={{ height: "140px", borderRadius: "16px", background: "#E5E7EB" }} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="skeleton-pulse" style={{ height: "220px", borderRadius: "16px", background: "#E5E7EB" }} />
-                ))}
-              </div>
-            </>
-          )}
-          {view === "roadmap" && (
-            <>
-              {/* Roadmap Loader */}
-              <div className="skeleton-pulse" style={{ height: "100px", borderRadius: "16px", background: "#E5E7EB", marginBottom: "32px" }} />
-              {[1, 2].map(i => (
-                <div key={i} style={{ display: "flex", gap: "32px", marginBottom: "48px" }}>
-                  <div className="skeleton-pulse" style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#E5E7EB", flexShrink: 0 }} />
-                  <div className="skeleton-pulse" style={{ flex: 1, height: "320px", borderRadius: "16px", background: "#E5E7EB" }} />
+              {/* Row 1: Profile Card + Language Card */}
+              <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
+                {/* Profile Card skeleton */}
+                <div style={{ flex: "1 1 400px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", alignItems: "center", gap: "24px" }}>
+                  <div className="skeleton-pulse" style={{ width: 96, height: 96, borderRadius: "50%", background: "#E5E7EB", flexShrink: 0 }} />
+                  <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div className="skeleton-pulse" style={{ height: 24, width: "55%", borderRadius: 8, background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: 14, width: "35%", borderRadius: 12, background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: 14, width: "80%", borderRadius: 6, background: "#E5E7EB" }} />
+                  </div>
                 </div>
-              ))}
+                {/* Language Card skeleton */}
+                <div style={{ flex: "1 1 400px", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "16px" }}>
+                  <div className="skeleton-pulse" style={{ height: 18, width: "45%", borderRadius: 6, background: "#E5E7EB" }} />
+                  <div style={{ display: "flex", gap: "12px" }}>
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} style={{ flex: i === 1 ? 4 : i === 2 ? 3 : i === 3 ? 2 : 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                        <div className="skeleton-pulse" style={{ height: 12, width: "70%", borderRadius: 4, background: "#E5E7EB" }} />
+                        <div className="skeleton-pulse" style={{ height: 8, borderRadius: 4, background: "#E5E7EB" }} />
+                        <div className="skeleton-pulse" style={{ height: 10, width: "40%", borderRadius: 4, background: "#E5E7EB" }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2: 4 Stat Cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+                {["#DBEAFE", "#DCFCE7", "#EDE9FE", "#FEF3C7"].map((bg, i) => (
+                  <div key={i} style={{ background: bg, borderRadius: "16px", padding: "24px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div className="skeleton-pulse" style={{ width: 40, height: 40, borderRadius: 12, background: "rgba(0,0,0,0.1)" }} />
+                    <div className="skeleton-pulse" style={{ height: 12, width: "50%", borderRadius: 4, background: "rgba(0,0,0,0.08)" }} />
+                    <div className="skeleton-pulse" style={{ height: 28, width: "40%", borderRadius: 6, background: "rgba(0,0,0,0.1)" }} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Row 3: Recruitability Score */}
+              <div style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "32px" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div className="skeleton-pulse" style={{ height: 20, width: 180, borderRadius: 6, background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: 14, width: 240, borderRadius: 4, background: "#E5E7EB" }} />
+                  </div>
+                  <div className="skeleton-pulse" style={{ height: 28, width: 80, borderRadius: 20, background: "#E5E7EB" }} />
+                </div>
+                <div style={{ display: "flex", gap: "48px", alignItems: "center", flexWrap: "wrap", marginBottom: "32px" }}>
+                  {/* Half ring placeholder */}
+                  <div className="skeleton-pulse" style={{ width: 220, height: 120, borderRadius: "110px 110px 0 0", background: "#E5E7EB" }} />
+                  {/* Metric bars */}
+                  <div style={{ flex: 1, minWidth: 300, display: "flex", flexDirection: "column", gap: "16px" }}>
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <div className="skeleton-pulse" style={{ height: 14, width: "30%", borderRadius: 4, background: "#E5E7EB" }} />
+                          <div className="skeleton-pulse" style={{ height: 14, width: 32, borderRadius: 4, background: "#E5E7EB" }} />
+                        </div>
+                        <div className="skeleton-pulse" style={{ height: 10, borderRadius: 6, background: "#E5E7EB" }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* 3 insight cards */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", borderTop: "1px solid #F3F4F6", paddingTop: "24px" }}>
+                  {["#F0FDF4", "#EFF6FF", "#F5F3FF"].map((bg, i) => (
+                    <div key={i} style={{ background: bg, borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <div className="skeleton-pulse" style={{ height: 10, width: "50%", borderRadius: 4, background: "rgba(0,0,0,0.08)" }} />
+                      <div className="skeleton-pulse" style={{ height: 16, width: "60%", borderRadius: 4, background: "rgba(0,0,0,0.1)" }} />
+                      <div className="skeleton-pulse" style={{ height: 10, width: "80%", borderRadius: 4, background: "rgba(0,0,0,0.06)" }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Row 4: Gap finder form */}
+              <div style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <div className="skeleton-pulse" style={{ height: 16, width: 140, borderRadius: 6, background: "#E5E7EB" }} />
+                  <div className="skeleton-pulse" style={{ height: 12, width: 220, borderRadius: 4, background: "#E5E7EB" }} />
+                </div>
+                <div style={{ display: "flex", gap: "12px", flex: "1 1 400px" }}>
+                  <div className="skeleton-pulse" style={{ flex: 1, height: 42, borderRadius: 8, background: "#E5E7EB" }} />
+                  <div className="skeleton-pulse" style={{ width: 120, height: 42, borderRadius: 8, background: "#D1D5DB" }} />
+                </div>
+              </div>
             </>
           )}
+
+          {/* ── GAP ANALYSIS SKELETON ── */}
+          {(view === "overview" || view === "gaps") && (
+            <div style={{ width: "100%", maxWidth: "100%" }}>
+              {/* Action bar */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", padding: "24px 32px", borderRadius: "0 0 16px 16px", marginBottom: "24px" }}>
+                <div className="skeleton-pulse" style={{ height: 28, width: 120, borderRadius: 16, background: "#DCFCE7" }} />
+                <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                  <div className="skeleton-pulse" style={{ height: 20, width: 140, borderRadius: 6, background: "#E5E7EB" }} />
+                  <div className="skeleton-pulse" style={{ height: 40, width: 200, borderRadius: 8, background: "#D1D5DB" }} />
+                </div>
+              </div>
+              {/* Two columns */}
+              <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", padding: "0 32px" }}>
+                {/* Strengths col */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div className="skeleton-pulse" style={{ height: 20, width: 140, borderRadius: 6, background: "#E5E7EB" }} />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} style={{ background: "rgba(255,255,255,0.15)", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <div className="skeleton-pulse" style={{ width: 28, height: 28, borderRadius: "50%", background: "#DCFCE7" }} />
+                          <div className="skeleton-pulse" style={{ width: 64, height: 22, borderRadius: 20, background: "#DCFCE7" }} />
+                        </div>
+                        <div className="skeleton-pulse" style={{ height: 18, width: "70%", borderRadius: 6, background: "#E5E7EB" }} />
+                        <div className="skeleton-pulse" style={{ height: 12, width: "90%", borderRadius: 4, background: "#E5E7EB" }} />
+                        <div className="skeleton-pulse" style={{ height: 12, width: "60%", borderRadius: 4, background: "#E5E7EB" }} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                {/* Gaps col */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
+                  <div className="skeleton-pulse" style={{ height: 20, width: 130, borderRadius: 6, background: "#E5E7EB" }} />
+                  {[1, 2, 3].map(i => (
+                    <div key={i} style={{ background: "rgba(255,255,255,0.15)", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="skeleton-pulse" style={{ width: 32, height: 32, borderRadius: 8, background: "#E0F2F1" }} />
+                          <div className="skeleton-pulse" style={{ height: 18, width: 120, borderRadius: 6, background: "#E5E7EB" }} />
+                        </div>
+                        <div className="skeleton-pulse" style={{ height: 14, width: 80, borderRadius: 4, background: "#E5E7EB" }} />
+                      </div>
+                      {/* Level bars */}
+                      {[1, 2].map(j => (
+                        <div key={j} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div className="skeleton-pulse" style={{ width: 80, height: 12, borderRadius: 4, background: "#E5E7EB" }} />
+                          <div className="skeleton-pulse" style={{ flex: 1, height: 24, borderRadius: 4, background: "#F3F4F6" }} />
+                          <div className="skeleton-pulse" style={{ width: 32, height: 12, borderRadius: 4, background: "#E5E7EB" }} />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── ROADMAP SKELETON ── */}
+          {view === "roadmap" && (
+            <div style={{ width: "100%", maxWidth: "1200px" }}>
+              {/* Header bar */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", padding: "24px 32px", borderRadius: "16px", border: "1px solid #E5E7EB", marginBottom: "32px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div className="skeleton-pulse" style={{ height: 22, width: 260, borderRadius: 6, background: "#E5E7EB" }} />
+                  <div className="skeleton-pulse" style={{ height: 14, width: 200, borderRadius: 4, background: "#E5E7EB" }} />
+                </div>
+                <div className="skeleton-pulse" style={{ height: 40, width: 130, borderRadius: 8, background: "#D1D5DB" }} />
+              </div>
+              {/* Summary box */}
+              <div className="skeleton-pulse" style={{ marginBottom: 32, padding: "20px", borderRadius: "12px", borderLeft: "4px solid #BFDBFE", background: "rgba(255,255,255,0.1)", height: 72 }} />
+              {/* Timeline items */}
+              <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "64px", padding: "24px 0", maxWidth: 900 }}>
+                <div style={{ position: "absolute", left: 24, top: 0, bottom: 0, width: 3, background: "linear-gradient(to bottom, #BFDBFE, #BBF7D0)", opacity: 0.3 }} />
+                {[1, 2, 3].map(i => (
+                  <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "40px", position: "relative", zIndex: 2 }}>
+                    {/* Node */}
+                    <div className="skeleton-pulse" style={{ position: "absolute", left: 13, top: 32, width: 24, height: 24, borderRadius: "50%", background: "#E5E7EB", border: "4px solid #BFDBFE" }} />
+                    {/* Branch line */}
+                    <div className="skeleton-pulse" style={{ position: "absolute", left: 37, top: 42, width: 32, height: 3, background: "#BFDBFE" }} />
+                    {/* Card */}
+                    <div style={{ marginLeft: 96, flex: 1, display: "flex", flexDirection: "column" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: 16 }}>
+                        <div className="skeleton-pulse" style={{ height: 24, width: "40%", borderRadius: 6, background: "#E5E7EB" }} />
+                        <div className="skeleton-pulse" style={{ height: 22, width: 80, borderRadius: 20, background: "#E5E7EB" }} />
+                      </div>
+                      <div style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: 20, border: "1px solid #E5E7EB", overflow: "hidden" }}>
+                        <div style={{ padding: 32, display: "flex", flexDirection: "column", gap: "16px" }}>
+                          <div className="skeleton-pulse" style={{ height: 12, width: "25%", borderRadius: 4, background: "#E5E7EB" }} />
+                          <div className="skeleton-pulse" style={{ height: 22, width: "65%", borderRadius: 6, background: "#E5E7EB" }} />
+                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            {[1, 2, 3].map(j => (
+                              <div key={j} className="skeleton-pulse" style={{ height: 30, width: 90, borderRadius: 24, background: "#E5E7EB" }} />
+                            ))}
+                          </div>
+                        </div>
+                        {/* Bottom challenge bar */}
+                        <div style={{ background: "#F9FAFB", padding: "24px 32px", borderTop: "1px solid #E5E7EB", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <div className="skeleton-pulse" style={{ height: 12, width: 160, borderRadius: 4, background: "#E5E7EB" }} />
+                            <div className="skeleton-pulse" style={{ height: 6, width: 200, borderRadius: 4, background: "#E5E7EB" }} />
+                          </div>
+                          <div className="skeleton-pulse" style={{ height: 44, width: 130, borderRadius: 24, background: "#E5E7EB" }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── OPEN SOURCE SKELETON ── */}
           {view === "opensource" && (
             <>
-              {/* Open Source Matchmaker Loader */}
+              {/* Filter bar */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "4px 0" }}>
+                <div className="skeleton-pulse" style={{ height: 20, width: 80, borderRadius: 6, background: "#E5E7EB" }} />
+                <div className="skeleton-pulse" style={{ height: 36, width: 140, borderRadius: 20, background: "#E5E7EB" }} />
+              </div>
+              {/* Search bar */}
+              <div style={{ marginBottom: "16px" }}>
+                <div className="skeleton-pulse" style={{ height: 14, width: 110, borderRadius: 4, background: "#E5E7EB", marginBottom: 8 }} />
+                <div style={{ display: "flex", gap: 12 }}>
+                  <div className="skeleton-pulse" style={{ flex: 1, height: 44, borderRadius: 8, background: "rgba(255,255,255,0.15)", border: "1px solid #E5E7EB" }} />
+                  <div className="skeleton-pulse" style={{ width: 100, height: 44, borderRadius: 8, background: "#F3F4F6" }} />
+                </div>
+              </div>
+              {/* Trending header */}
+              <div className="skeleton-pulse" style={{ height: 20, width: 180, borderRadius: 6, background: "#E5E7EB", marginBottom: "16px" }} />
+              {/* Repo cards */}
               {[1, 2, 3].map(i => (
-                <div key={i} className="skeleton-pulse" style={{ background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", marginBottom: "24px", flexWrap: "wrap" }}>
+                  {/* Left: repo info */}
                   <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "12px" }}>
-                    <div className="skeleton-pulse" style={{ height: "28px", width: "60%", borderRadius: "8px", background: "#E5E7EB" }} />
-                    <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
-                    <div className="skeleton-pulse" style={{ height: "24px", width: "80%", borderRadius: "8px", background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: 22, width: "55%", borderRadius: 8, background: "#E5E7EB" }} />
+                    <div className="skeleton-pulse" style={{ height: 40, width: "90%", borderRadius: 8, background: "#E5E7EB" }} />
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <div className="skeleton-pulse" style={{ height: 24, width: 80, borderRadius: 20, background: "#DBEAFE" }} />
+                      <div className="skeleton-pulse" style={{ height: 24, width: 120, borderRadius: 20, background: "#DCFCE7" }} />
+                    </div>
+                    <div style={{ display: "flex", gap: "16px" }}>
+                      <div className="skeleton-pulse" style={{ height: 16, width: 70, borderRadius: 4, background: "#E5E7EB" }} />
+                      <div className="skeleton-pulse" style={{ height: 16, width: 60, borderRadius: 4, background: "#E5E7EB" }} />
+                    </div>
                   </div>
-                  <div style={{ flex: "1 1 300px", background: "#F3F4F6", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <div className="skeleton-pulse" style={{ height: "16px", width: "40%", borderRadius: "4px", background: "#E5E7EB" }} />
-                    <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
-                    <div className="skeleton-pulse" style={{ height: "40px", width: "100%", borderRadius: "8px", background: "#E5E7EB", marginTop: "auto" }} />
+                  {/* Right: suggested issue */}
+                  <div style={{ flex: "1 1 300px", background: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: "12px", padding: "20px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div className="skeleton-pulse" style={{ height: 10, width: "35%", borderRadius: 4, background: "rgba(16,185,129,0.15)" }} />
+                    <div className="skeleton-pulse" style={{ height: 60, width: "100%", borderRadius: 8, background: "rgba(16,185,129,0.1)" }} />
+                    <div style={{ borderTop: "1px solid rgba(16,185,129,0.2)", paddingTop: "12px", marginTop: "auto" }}>
+                      <div className="skeleton-pulse" style={{ height: 16, width: "60%", borderRadius: 4, background: "rgba(16,185,129,0.12)" }} />
+                    </div>
+                    <div className="skeleton-pulse" style={{ height: 34, width: 100, borderRadius: 8, background: "#E5E7EB", alignSelf: "flex-end" }} />
                   </div>
                 </div>
               ))}
@@ -549,7 +743,7 @@ export default function Dashboard() {
               <div>
                 <div style={{ fontSize: "0.85rem", color: "#7C3AED", fontWeight: 600 }}>Contributions</div>
                 <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#5B21B6", letterSpacing: "-0.5px" }}>
-                  {(state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) >= 1000 ? ((state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832)}
+                  {(state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0)) >= 1000 ? ((state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0)) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0))}
                 </div>
               </div>
             </div>
