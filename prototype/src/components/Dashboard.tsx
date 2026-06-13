@@ -620,20 +620,76 @@ export default function Dashboard() {
 
             {/* Gaps Column */}
             <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "16px" }}>
-              <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#2563EB", margin: "0 0 4px 0" }}>Identified Gaps</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px" }}>
-              {state.analysis_results.structural_gaps.map((gap, idx) => (
-                   <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #2563EB", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                         <div style={{ color: "#2563EB" }}>
-                           <Puzzle size={24} fill="#2563EB" color="#2563EB" />
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 600, color: "#529490", margin: "0 0 4px 0" }}>Identified Gaps</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {state.analysis_results.structural_gaps.map((gap, idx) => {
+                 const isPriority = idx === state.analysis_results.structural_gaps.length - 1;
+                 
+                 if (isPriority) {
+                   return (
+                     <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E5E7EB", display: "flex", flexDirection: "column", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+                       <div style={{ display: "flex", alignItems: "flex-end", borderBottom: "4px solid #529490" }}>
+                          <div style={{ background: "#529490", padding: "8px 24px 8px 16px", color: "#fff", fontSize: "0.85rem", fontWeight: 600, clipPath: "polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%)" }}>
+                            Priority Gap
+                          </div>
+                       </div>
+                       <div style={{ padding: "16px 20px" }}>
+                         <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#111827", margin: "0 0 8px 0" }}>Top Priority: {gap.title}</h4>
+                         <p style={{ fontSize: "0.9rem", color: "#4B5563", margin: 0, lineHeight: 1.5 }}>
+                           AI Suggestion: {gap.description}
+                         </p>
+                       </div>
+                     </div>
+                   );
+                 }
+
+                 const gapLevels = gap.severity === "critical" ? 3 : gap.severity === "high" ? 2 : 1;
+                 const yourLevelNum = gap.severity === "critical" ? 2 : 3;
+                 const yourLevelText = yourLevelNum === 2 ? "Level 2: Beginner" : "Level 3: Proficient";
+                 const yourPercent = yourLevelNum === 2 ? 25 : 42;
+                 
+                 const marketLevelNum = yourLevelNum + gapLevels;
+                 const marketLevelText = marketLevelNum >= 5 ? "Level 5: Expert" : `Level ${marketLevelNum}: Advanced`;
+                 const marketPercent = marketLevelNum >= 5 ? 85 : 65;
+
+                 return (
+                   <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px", display: "flex", flexDirection: "column", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                           <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#E0F2F1", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                             <Puzzle size={16} color="#529490" />
+                           </div>
+                           <h4 style={{ fontSize: "1.05rem", fontWeight: 700, color: "#111827", margin: 0 }}>{gap.title}</h4>
                          </div>
-                         <span style={{ padding: "4px 16px", background: "#2563EB", color: "#fff", fontSize: "0.75rem", borderRadius: "20px", fontWeight: 600 }}>Gap</span>
+                         <div style={{ fontSize: "0.85rem", fontWeight: 600, color: "#111827" }}>
+                           Gap: +{gapLevels} Levels
+                         </div>
                       </div>
-                      <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "4px 0 0 0" }}>{gap.title}</h4>
-                      <p style={{ fontSize: "0.9rem", color: "#4B5563", lineHeight: 1.5, margin: 0 }}>{gap.description}</p>
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                        {/* Your Level */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "80px", fontSize: "0.85rem", color: "#4B5563" }}>Your Level</div>
+                          <div style={{ flex: 1, height: "24px", background: "#F3F4F6", borderRadius: "4px", position: "relative", display: "flex", alignItems: "center" }}>
+                            <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${yourPercent}%`, background: "#4B5563", borderRadius: "4px" }} />
+                            <span style={{ position: "absolute", left: "8px", fontSize: "0.75rem", color: "#fff", zIndex: 1, whiteSpace: "nowrap" }}>{yourLevelText}</span>
+                          </div>
+                          <div style={{ width: "32px", textAlign: "right", fontSize: "0.85rem", color: "#111827", fontWeight: 500 }}>{yourPercent}%</div>
+                        </div>
+
+                        {/* Market Demand */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "80px", fontSize: "0.85rem", color: "#4B5563", lineHeight: 1.2 }}>Market Demand</div>
+                          <div style={{ flex: 1, height: "24px", background: "#F3F4F6", borderRadius: "4px", position: "relative", display: "flex", alignItems: "center" }}>
+                            <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: `${marketPercent}%`, background: "#529490", borderRadius: "4px" }} />
+                            <span style={{ position: "absolute", left: "8px", fontSize: "0.75rem", color: "#fff", zIndex: 1, whiteSpace: "nowrap" }}>{marketLevelText}</span>
+                          </div>
+                          <div style={{ width: "32px", textAlign: "right", fontSize: "0.85rem", color: "#111827", fontWeight: 500 }}>{marketPercent}%</div>
+                        </div>
+                      </div>
                    </div>
-              ))}
+                 );
+              })}
               </div>
             </div>
           </div>
