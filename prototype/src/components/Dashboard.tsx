@@ -21,6 +21,7 @@ import {
   Settings,
   Puzzle,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { GlobalState, PipelineStep } from "@/lib/types";
 
 const NAV_STEPS = [
@@ -65,17 +66,13 @@ const STEP_MESSAGES: Record<string, string> = {
 type AppView = "landing" | "skills" | "overview" | "gaps" | "opensource" | "roadmap";
 
 export default function Dashboard() {
+  const router = useRouter();
   const { data: session, status } = useSession();
-  const [username, setUsername] = useState("");
-  const [targetRole, setTargetRole] = useState("");
-  const [state, setState] = useState<GlobalState | null>(null);
-  const [step, setStep] = useState<PipelineStep>("idle");
-  const [completedSteps, setCompletedSteps] = useState<PipelineStep[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<AppView>("landing");
+  const { state, setState, username, setUsername, targetRole, setTargetRole, step, setStep, completedSteps, setCompletedSteps, error, setError, view, setView } = useAppState();
   const [activeMilestones, setActiveMilestones] = useState<Record<string, boolean | undefined>>({});
   const [isSaved, setIsSaved] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const [osProjects, setOsProjects] = useState<any[]>([]);
   const [osTimeframe, setOsTimeframe] = useState<"daily" | "weekly" | "monthly">("weekly");
@@ -236,7 +233,7 @@ export default function Dashboard() {
       <div style={{ background: "#FDFDF8", color: "#111", minHeight: "100vh", width: "100%", fontFamily: "'Inter', -apple-system, sans-serif", display: "flex", flexDirection: "column", overflowX: "hidden" }}>
         {/* Top Nav */}
         <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "24px 40px", width: "100%", maxWidth: "1600px", margin: "0 auto" }}>
-          <div style={{ fontWeight: 800, fontSize: "1.5rem", display: "flex", alignItems: "center", gap: "6px", letterSpacing: "-0.5px" }}>
+          <div onClick={() => window.location.href = '/'} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.5rem", display: "flex", alignItems: "center", gap: "6px", letterSpacing: "-0.5px" }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
             IDR
           </div>
@@ -321,7 +318,7 @@ export default function Dashboard() {
       <aside style={{ width: "260px", background: "#FAFAFA", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB" }}>
         {/* Logo Area */}
         <div style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent" }}>
-          <div style={{ fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
+          <div onClick={() => window.location.href = '/'} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 5 18 3-9h5"/></svg>
             IDR
           </div>
@@ -342,15 +339,15 @@ export default function Dashboard() {
 
         {/* Navigation Links */}
         <nav style={{ flex: 1, padding: "0 12px", display: "flex", flexDirection: "column", gap: "2px" }}>
-           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => setView("skills")} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
-           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => state?.remediation_strategy && setView("overview")} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
+           <SidebarLink active={view==="skills"} text="Profile Setup" onClick={() => { setView("skills"); router.push("/profile"); }} icon={<User size={16}/>} iconBg="#ECFDF5" iconColor="#10B981" />
+           <SidebarLink active={view==="overview" || view==="gaps"} text="Gap Analysis" onClick={() => { if (state?.remediation_strategy) { setView("overview"); router.push("/profile"); } }} disabled={!state?.remediation_strategy} icon={<Target size={16}/>} iconBg="#FEF3C7" iconColor="#F59E0B" />
            <SidebarLink active={view==="opensource"} text="Open Source" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
-              if (state) setView("opensource");
+              if (state) { setView("opensource"); router.push("/dashboard"); }
            }} disabled={!state} icon={<Search size={16}/>} iconBg="#F3E8FF" iconColor="#8B5CF6" />
            <SidebarLink active={view==="roadmap"} text="Career Roadmap" onClick={() => {
               if (!session) { setIsLoginModalOpen(true); return; }
-              if (state?.dynamic_roadmap) setView("roadmap");
+              if (state?.dynamic_roadmap) { setView("roadmap"); router.push("/dashboard"); }
            }} disabled={!state?.dynamic_roadmap} icon={<Map size={16}/>} iconBg="#E0F2FE" iconColor="#0EA5E9" />
            
            <div style={{ marginTop: "24px", marginBottom: "8px", paddingLeft: "12px", fontSize: "0.75rem", color: "#9CA3AF", fontWeight: 600 }}>Preferences</div>
@@ -364,8 +361,7 @@ export default function Dashboard() {
         {/* Top Header */}
         <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "#fff", borderBottom: "1px solid #E5E7EB", zIndex: 10, flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
-             <Search size={18} color="#9CA3AF" />
-             <input type="text" placeholder="Search projects, skills..." style={{ border: "none", outline: "none", fontSize: "0.95rem", width: "100%", maxWidth: "400px", color: "#111827" }} />
+            {/* Search removed as requested */}
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
             <button onClick={resetAll} style={{ background: "#F3F4F6", color: "#111827", border: "none", padding: "8px 16px", borderRadius: "8px", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer", transition: "all 0.2s" }} onMouseOver={e => e.currentTarget.style.background="#E5E7EB"} onMouseOut={e => e.currentTarget.style.background="#F3F4F6"}>
@@ -373,8 +369,18 @@ export default function Dashboard() {
             </button>
             <Clock size={18} color="#9CA3AF" style={{ cursor: "pointer" }} />
             {session ? (
-              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer" }} onClick={() => signOut()}>
-                {session.user?.name?.charAt(0) || "U"}
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", position: "relative" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                {session.user?.image ? <img src={session.user.image} style={{width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover'}}/> : (session.user?.name?.charAt(0) || "U")}
+                {isDropdownOpen && (
+                  <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "#fff", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: "1px solid #E5E7EB", overflow: "hidden", minWidth: "160px", zIndex: 100 }}>
+                    <button onClick={(e) => { e.stopPropagation(); setView("skills"); setIsDropdownOpen(false); router.push('/profile'); }} style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", borderBottom: "1px solid #E5E7EB", cursor: "pointer", fontSize: "0.9rem", color: "#111827", textAlign: "left" }} onMouseOver={(e) => e.currentTarget.style.background = "#F3F4F6"} onMouseOut={(e) => e.currentTarget.style.background = "transparent"}>
+                      <User size={16} /> Profile
+                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); signOut(); }} style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", cursor: "pointer", fontSize: "0.9rem", color: "#EF4444", textAlign: "left" }} onMouseOver={(e) => e.currentTarget.style.background = "#FEF2F2"} onMouseOut={(e) => e.currentTarget.style.background = "transparent"}>
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ width: 32, height: 32, borderRadius: 8, background: "#F3F4F6", color: "#6B7280", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }} onClick={() => setIsLoginModalOpen(true)}>
@@ -444,10 +450,10 @@ export default function Dashboard() {
                 </div>
               )}
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                <h2 style={{ fontSize: "1.6rem", fontWeight: 700, color: "#111827", margin: 0, letterSpacing: "-0.5px", display: "flex", alignItems: "center", gap: "12px" }}>
-                  {state.raw_github_metadata.profile?.name || username || githubUsername}
-                  <a href={`https://github.com/${username || githubUsername}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex" }}>
-                    <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#6B7280", background: "#F3F4F6", padding: "4px 12px", borderRadius: "20px", display: "inline-flex", alignItems: "center", transition: "background 0.2s" }} onMouseOver={(e) => e.currentTarget.style.background = "#E5E7EB"} onMouseOut={(e) => e.currentTarget.style.background = "#F3F4F6"}>
+                <h2 style={{ fontSize: "1.6rem", fontWeight: 700, color: "#111827", margin: 0, letterSpacing: "-0.5px", display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                  <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>{state.raw_github_metadata.profile?.name || username || githubUsername}</span>
+                  <a href={`https://github.com/${username || githubUsername}`} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", display: "flex", flexShrink: 0 }}>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 500, color: "#6B7280", background: "#F3F4F6", padding: "4px 10px", borderRadius: "20px", display: "inline-flex", alignItems: "center", transition: "background 0.2s", whiteSpace: "nowrap" }} onMouseOver={(e) => e.currentTarget.style.background = "#E5E7EB"} onMouseOut={(e) => e.currentTarget.style.background = "#F3F4F6"}>
                       &lt;/&gt; {username || githubUsername}
                     </span>
                   </a>
@@ -520,8 +526,12 @@ export default function Dashboard() {
           <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
              <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 32px 0" }}>Recruitability Score</h3>
              
-             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "40px" }}>
+             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
                <HalfScoreRing score={state.analysis_results?.employability_index || 0} size={280} strokeWidth={20} />
+               <p style={{ fontSize: "0.95rem", color: "#4B5563", maxWidth: "600px", textAlign: "center", lineHeight: 1.6, marginTop: "-20px" }}>
+                 This score represents your overall readiness for industry roles based on code quality, commit history, and active project contributions.
+                 Higher scores indicate a stronger portfolio that aligns with market demand.
+               </p>
              </div>
 
              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -823,6 +833,16 @@ export default function Dashboard() {
              </div>
           </div>
 
+          <div className="os-search-bar" style={{ marginBottom: "16px" }}>
+            <h4 style={{ marginBottom: 8, fontSize: "0.9rem", color: "#111827" }}>Search Projects</h4>
+            <div style={{ display: "flex", gap: 12 }}>
+              <div className="input-group" style={{ flex: 1 }}>
+                <input className="input-field" style={{ background: "#fff", borderColor: "#E5E7EB", width: "100%", padding: "12px 16px", borderRadius: "8px", border: "1px solid #E5E7EB", outline: "none" }} placeholder={`Search for ${Object.keys(state.raw_github_metadata.languages)[0] || 'projects'}...`} />
+              </div>
+              <button className="btn-secondary" style={{ background: "#F3F4F6", color: "#111827", border: "none", padding: "0 24px", borderRadius: "8px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}><Search size={16} /> Search</button>
+            </div>
+          </div>
+
           <h3 style={{ fontSize: "1.2rem", color: "#111827", fontWeight: 600, margin: 0 }}>Trending Projects <span style={{ color: "#6B7280", fontWeight: 400 }}>({osProjects.length})</span></h3>
 
           {/* Cards List */}
@@ -856,9 +876,13 @@ export default function Dashboard() {
                     
                     {/* Left Side: Repo Info & Stats */}
                     <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-                      <h4 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 12px 0" }}>
+                      <h4 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 8px 0" }}>
                         <a href={repo.html_url} target="_blank" rel="noopener noreferrer" style={{ color: "#111827", textDecoration: "none" }}>{repo.full_name}</a>
                       </h4>
+                      
+                      <p style={{ fontSize: "0.95rem", color: "#4B5563", marginBottom: "16px", lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {repo.description || "No description provided for this repository. It might be a collection of scripts, a personal project, or still under early development."}
+                      </p>
                       
                       <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
                         <span style={{ background: "#1D4ED8", color: "#fff", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: 500 }}>{repo.language || "TypeScript"}</span>
