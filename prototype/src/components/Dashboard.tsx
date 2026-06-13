@@ -22,6 +22,7 @@ import {
   Puzzle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAppState } from "./Providers";
 import type { GlobalState, PipelineStep } from "@/lib/types";
 
 const NAV_STEPS = [
@@ -736,55 +737,93 @@ export default function Dashboard() {
                 </div>
               )}
               
-              <div style={{ display: "flex", overflowX: "auto", padding: "16px 8px 32px 8px", gap: "48px", minHeight: "380px", alignItems: "stretch" }}>
+              <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "64px", padding: "24px 0", maxWidth: "900px" }}>
+                {/* The central vertical line */}
+                <div style={{ position: "absolute", left: "24px", top: 0, bottom: 0, width: "3px", background: "linear-gradient(to bottom, #1D4ED8, #10B981)", opacity: 0.2 }} />
+
                 {state.dynamic_roadmap.milestones.map((m, idx) => {
                   const isActive = activeMilestones[m.id] !== undefined ? activeMilestones[m.id] : m.status === "active";
-                  const color = isActive ? "#10B981" : "var(--border)";
-                  
+                  const color = isActive ? "#10B981" : "#D1D5DB";
+                  const iconColor = isActive ? "#10B981" : "#9CA3AF";
+
                   return (
-                    <div key={m.id} style={{ display: "flex", alignItems: "center", position: "relative" }}>
-                      {/* The Node Card */}
-                      <div style={{ width: "320px", height: "100%", flexShrink: 0, background: "#fff", border: `2px solid ${color}`, borderRadius: "12px", boxShadow: isActive ? "0 8px 30px rgba(16, 185, 129, 0.15)" : "var(--shadow-sm)", padding: "24px", display: "flex", flexDirection: "column", position: "relative", zIndex: 2 }}>
+                    <div key={m.id} style={{ display: "flex", alignItems: "flex-start", gap: "40px", position: "relative", zIndex: 2 }}>
+                      
+                      {/* Node on the line */}
+                      <div style={{ position: "absolute", left: "25px", top: "32px", width: "24px", height: "24px", borderRadius: "50%", background: "#fff", border: `4px solid ${color}`, transform: "translateX(-50%)", zIndex: 3 }} />
+                      
+                      {/* Branch Arrow (Horizontal line pointing right) */}
+                      <div style={{ position: "absolute", left: "37px", top: "42px", width: "32px", height: "3px", background: color, zIndex: 1 }} />
+                      <svg style={{ position: "absolute", left: "61px", top: "36px", color: color }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+
+                      {/* The Card Wrapper */}
+                      <div style={{ marginLeft: "96px", flex: 1, display: "flex", flexDirection: "column" }}>
+                        {/* Floating Stage Title */}
+                        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#111827", marginBottom: "16px", letterSpacing: "-0.5px" }}>{m.title}</h3>
                         
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-                          <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px" }}>Stage {idx + 1}</span>
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: isActive ? "rgba(16, 185, 129, 0.1)" : "var(--bg-primary)", color: isActive ? "#10B981" : "var(--text-muted)", padding: "4px 10px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600 }}>
-                            {isActive ? <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10B981" }} /> : null}
-                            {isActive ? "Active" : "Pending"}
+                        {/* Main Card */}
+                        <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E5E7EB", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                          
+                          <div style={{ padding: "32px" }}>
+                            <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>Stage {idx + 1}: Foundations</div>
+                            <h4 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#111827", marginBottom: "24px", letterSpacing: "-0.5px" }}>{m.description?.split('.')[0] || m.title + " Fundamentals"}</h4>
+                            
+                            {/* Skills */}
+                            <div style={{ marginBottom: "24px" }}>
+                              <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600, marginBottom: "12px" }}>Required Skills</div>
+                              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                                {m.skills_involved.slice(0, 4).map(skill => (
+                                  <span key={skill} style={{ background: "#111827", color: "#F3F4F6", padding: "6px 14px", borderRadius: "24px", fontSize: "0.85rem", fontWeight: 600 }}>{skill}</span>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Curated Video Courses */}
+                            {m.resources && m.resources.length > 0 && (
+                              <div style={{ marginBottom: "8px" }}>
+                                <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600, marginBottom: "12px" }}>Curated Video Courses</div>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "16px" }}>
+                                  {m.resources.slice(0, 3).map((res, i) => {
+                                    const thumbs = [
+                                      "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?auto=format&fit=crop&w=300&q=80",
+                                      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=300&q=80",
+                                      "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=300&q=80"
+                                    ];
+                                    const bg = thumbs[i % thumbs.length];
+                                    return (
+                                      <div key={i} style={{ display: "flex", flexDirection: "column", gap: "12px", cursor: "pointer", transition: "transform 0.2s" }} onClick={() => window.open(res.url, "_blank")} onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-4px)"} onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}>
+                                        <div style={{ width: "100%", aspectRatio: "16/9", borderRadius: "12px", background: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${bg}) center/cover`, display: "flex", alignItems: "center", justifyContent: "center", position: "relative", overflow: "hidden" }}>
+                                          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="#111827"><path d="M5 3l14 9-14 9V3z"/></svg>
+                                          </div>
+                                        </div>
+                                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#4B5563", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 4px" }}>{res.title}</span>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Bottom Challenge Section */}
+                          <div style={{ background: "#F9FAFB", padding: "24px 32px", borderTop: "1px solid #E5E7EB", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+                            <div style={{ flex: 1, minWidth: "200px" }}>
+                              <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>Challenge to Unlock Level {idx + 2}</div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "12px" }}>
+                                <span style={{ fontSize: "1rem", fontWeight: 700, color: "#111827" }}>Build a {m.title.split(' ')[0] || 'Core'} Project</span>
+                                <span style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600 }}>0/5</span>
+                              </div>
+                              <div style={{ width: "100%", maxWidth: "240px", height: "6px", background: "#E5E7EB", borderRadius: "4px", overflow: "hidden" }}>
+                                <div style={{ width: isActive ? "20%" : "0%", height: "100%", background: color, borderRadius: "4px" }} />
+                              </div>
+                            </div>
+                            <button style={{ background: isActive ? "#111827" : "#E5E7EB", color: isActive ? "#fff" : "#9CA3AF", border: "none", padding: "12px 24px", borderRadius: "24px", fontWeight: 700, fontSize: "0.95rem", cursor: isActive ? "pointer" : "not-allowed", transition: "transform 0.2s" }} onMouseOver={(e) => isActive && (e.currentTarget.style.transform = "scale(1.05)")} onMouseOut={(e) => isActive && (e.currentTarget.style.transform = "scale(1)")}>
+                              {isActive ? "Start Challenge" : "Locked"}
+                            </button>
                           </div>
                         </div>
-                        
-                        <h4 style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--text-primary)", marginBottom: "12px", lineHeight: 1.3 }}>{m.title}</h4>
-                        <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "24px", flex: 1 }}>{m.description}</p>
-                        
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "24px" }}>
-                          {m.skills_involved.slice(0, 3).map(skill => (
-                            <span key={skill} style={{ fontSize: "0.75rem", background: "var(--bg-primary)", color: "var(--text-secondary)", padding: "4px 8px", borderRadius: "4px", border: "1px solid var(--border-light)", fontWeight: 500 }}>{skill}</span>
-                          ))}
-                        </div>
-
-                        {m.resources && m.resources.length > 0 && (
-                          <div style={{ marginBottom: "24px" }}>
-                             <div style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "8px" }}>Resources</div>
-                             <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                               {m.resources.slice(0, 2).map((res, i) => (
-                                 <a key={i} href={res.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.8rem", color: "#3B82F6", textDecoration: "none", display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                                    • {res.title}
-                                 </a>
-                               ))}
-                             </div>
-                          </div>
-                        )}
-
-                        <button className={isActive ? "btn-primary" : "btn-secondary"} style={{ width: "100%", justifyContent: "center", padding: "10px", fontSize: "0.9rem", marginTop: "auto" }}>
-                          {isActive ? "Complete Stage" : "View Details"}
-                        </button>
                       </div>
-
-                      {/* Connecting Line */}
-                      {idx < state.dynamic_roadmap.milestones.length - 1 && (
-                         <div style={{ position: "absolute", right: "-48px", top: "50%", transform: "translateY(-50%)", width: "48px", height: "3px", background: color, zIndex: 1 }} />
-                      )}
                     </div>
                   );
                 })}
