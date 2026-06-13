@@ -494,7 +494,7 @@ export default function Dashboard() {
               <User size={24} color="#4B5563" />
               <div>
                 <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Followers</div>
-                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{state.raw_github_metadata.profile?.followers >= 1000 ? (state.raw_github_metadata.profile?.followers / 1000).toFixed(1) + 'k' : state.raw_github_metadata.profile?.followers || 0}</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{(state.raw_github_metadata.profile?.followers || 0) >= 1000 ? ((state.raw_github_metadata.profile?.followers || 0) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.profile?.followers || 0)}</div>
               </div>
             </div>
 
