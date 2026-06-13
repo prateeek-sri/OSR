@@ -273,20 +273,9 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", position: "relative" }}>
-      <div style={{ position: "absolute", zIndex: 0, inset: 0 }}>
-        <HeroGeometric 
-          title1="Elevate"
-          title2="Your Brand"
-          description="Scale your product with clarity, precision, and motion-led design."
-          color1="#3B82F6"
-          color2="#F0F9FF"
-          speed={1}
-        />
-      </div>
-
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Sidebar */}
-      <aside style={{ width: "260px", background: "rgba(255, 255, 255, 0.3)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid rgba(255, 255, 255, 0.5)", zIndex: 10 }}>
+      <aside style={{ width: "260px", background: "#FAFAFA", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB", zIndex: 10 }}>
         {/* Logo Area */}
         <div style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent" }}>
           <div onClick={() => window.location.href = '/'} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
@@ -327,8 +316,16 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Column */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "transparent", zIndex: 10 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "transparent", position: "relative", zIndex: 10 }}>
         
+        <div style={{ position: "absolute", zIndex: 0, inset: 0 }}>
+          <HeroGeometric 
+            color1="#3B82F6"
+            color2="#F0F9FF"
+            speed={1}
+          />
+        </div>
+
         {/* Top Header */}
         <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "rgba(255, 255, 255, 0.3)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255, 255, 255, 0.4)", zIndex: 10, flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
