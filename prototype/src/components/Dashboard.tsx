@@ -75,6 +75,11 @@ export default function Dashboard() {
   const [isSaved, setIsSaved] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Roadmap progression state
+  const [completedStages, setCompletedStages] = useState<Set<number>>(new Set());
+  const [startedStage, setStartedStage] = useState<number | null>(null);
+  const [checkedSkills, setCheckedSkills] = useState<Record<number, Set<string>>>({});
   
   const [osProjects, setOsProjects] = useState<any[]>([]);
   const [osTimeframe, setOsTimeframe] = useState<"daily" | "weekly" | "monthly">("weekly");
@@ -804,41 +809,90 @@ export default function Dashboard() {
                 <div style={{ position: "absolute", left: "24px", top: 0, bottom: 0, width: "3px", background: "linear-gradient(to bottom, #1D4ED8, #10B981)", opacity: 0.2 }} />
 
                 {state.dynamic_roadmap.milestones.map((m, idx) => {
-                  const isActive = activeMilestones[m.id] !== undefined ? activeMilestones[m.id] : m.status === "active";
-                  const color = isActive ? "#10B981" : "#D1D5DB";
-                  const iconColor = isActive ? "#10B981" : "#9CA3AF";
+                  const isCompleted = completedStages.has(idx);
+                  const isUnlocked = idx === 0 || completedStages.has(idx - 1);
+                  const isStarted = startedStage === idx;
+                  const stageChecked = checkedSkills[idx] || new Set<string>();
+                  const allSkills = m.skills_involved;
+                  const allChecked = allSkills.length > 0 && allSkills.every(s => stageChecked.has(s));
+                  const checkedCount = allSkills.filter(s => stageChecked.has(s)).length;
+                  const progressPercent = allSkills.length > 0 ? Math.round((checkedCount / allSkills.length) * 100) : 0;
+
+                  const nodeColor = isCompleted ? "#10B981" : isUnlocked ? "#3B82F6" : "#D1D5DB";
+
+                  const toggleSkill = (skill: string) => {
+                    setCheckedSkills(prev => {
+                      const current = new Set(prev[idx] || []);
+                      if (current.has(skill)) current.delete(skill); else current.add(skill);
+                      return { ...prev, [idx]: current };
+                    });
+                  };
+
+                  const handleComplete = () => {
+                    setCompletedStages(prev => new Set([...prev, idx]));
+                    setStartedStage(null);
+                  };
 
                   return (
-                    <div key={m.id} style={{ display: "flex", alignItems: "flex-start", gap: "40px", position: "relative", zIndex: 2 }}>
+                    <div key={m.id} style={{ display: "flex", alignItems: "flex-start", gap: "40px", position: "relative", zIndex: 2, opacity: isUnlocked || isCompleted ? 1 : 0.5, transition: "opacity 0.3s" }}>
                       
                       {/* Node on the line */}
-                      <div style={{ position: "absolute", left: "25px", top: "32px", width: "24px", height: "24px", borderRadius: "50%", background: "#fff", border: `4px solid ${color}`, transform: "translateX(-50%)", zIndex: 3 }} />
+                      <div style={{ position: "absolute", left: "25px", top: "32px", width: "24px", height: "24px", borderRadius: "50%", background: isCompleted ? "#10B981" : "#fff", border: `4px solid ${nodeColor}`, transform: "translateX(-50%)", zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {isCompleted && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                      </div>
                       
-                      {/* Branch Arrow (Horizontal line pointing right) */}
-                      <div style={{ position: "absolute", left: "37px", top: "42px", width: "32px", height: "3px", background: color, zIndex: 1 }} />
-                      <svg style={{ position: "absolute", left: "61px", top: "36px", color: color }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      {/* Branch Arrow */}
+                      <div style={{ position: "absolute", left: "37px", top: "42px", width: "32px", height: "3px", background: nodeColor, zIndex: 1 }} />
+                      <svg style={{ position: "absolute", left: "61px", top: "36px", color: nodeColor }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
 
                       {/* The Card Wrapper */}
                       <div style={{ marginLeft: "96px", flex: 1, display: "flex", flexDirection: "column" }}>
                         {/* Floating Stage Title */}
-                        <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#111827", marginBottom: "16px", letterSpacing: "-0.5px" }}>{m.title}</h3>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                          <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#111827", margin: 0, letterSpacing: "-0.5px" }}>{m.title}</h3>
+                          {isCompleted && <span style={{ background: "#ECFDF5", color: "#059669", padding: "4px 12px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700 }}>✓ Completed</span>}
+                          {isStarted && !isCompleted && <span style={{ background: "#EFF6FF", color: "#2563EB", padding: "4px 12px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700 }}>In Progress</span>}
+                          {!isUnlocked && !isCompleted && <span style={{ background: "#F3F4F6", color: "#9CA3AF", padding: "4px 12px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700 }}>🔒 Locked</span>}
+                        </div>
                         
                         {/* Main Card */}
-                        <div style={{ background: "#fff", borderRadius: "20px", border: "1px solid #E5E7EB", boxShadow: "0 4px 20px rgba(0,0,0,0.04)", overflow: "hidden" }}>
+                        <div style={{ background: "#fff", borderRadius: "20px", border: `1px solid ${isCompleted ? "#BBF7D0" : isStarted ? "#BFDBFE" : "#E5E7EB"}`, boxShadow: isStarted ? "0 4px 20px rgba(59,130,246,0.08)" : "0 4px 20px rgba(0,0,0,0.04)", overflow: "hidden", transition: "all 0.3s" }}>
                           
                           <div style={{ padding: "32px" }}>
                             <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>Stage {idx + 1}: Foundations</div>
                             <h4 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#111827", marginBottom: "24px", letterSpacing: "-0.5px" }}>{m.description?.split('.')[0] || m.title + " Fundamentals"}</h4>
                             
-                            {/* Skills */}
-                            <div style={{ marginBottom: "24px" }}>
-                              <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600, marginBottom: "12px" }}>Required Skills</div>
-                              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                                {m.skills_involved.slice(0, 4).map(skill => (
-                                  <span key={skill} style={{ background: "#111827", color: "#F3F4F6", padding: "6px 14px", borderRadius: "24px", fontSize: "0.85rem", fontWeight: 600 }}>{skill}</span>
-                                ))}
+                            {/* Skills as pills (when not started) or checklist (when started) */}
+                            {!isStarted && !isCompleted ? (
+                              <div style={{ marginBottom: "24px" }}>
+                                <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600, marginBottom: "12px" }}>Required Skills</div>
+                                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                                  {allSkills.slice(0, 4).map(skill => (
+                                    <span key={skill} style={{ background: "#111827", color: "#F3F4F6", padding: "6px 14px", borderRadius: "24px", fontSize: "0.85rem", fontWeight: 600 }}>{skill}</span>
+                                  ))}
+                                </div>
                               </div>
-                            </div>
+                            ) : (
+                              <div style={{ marginBottom: "24px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+                                  <div style={{ fontSize: "0.85rem", color: "#4B5563", fontWeight: 600 }}>Skills Checklist</div>
+                                  <span style={{ fontSize: "0.85rem", fontWeight: 700, color: allChecked ? "#059669" : "#3B82F6" }}>{checkedCount}/{allSkills.length} completed</span>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                  {allSkills.map(skill => {
+                                    const isChecked = stageChecked.has(skill);
+                                    return (
+                                      <label key={skill} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 16px", borderRadius: "10px", border: `1px solid ${isChecked ? "#BBF7D0" : "#E5E7EB"}`, background: isChecked ? "#F0FDF4" : "#FAFAFA", cursor: isCompleted ? "default" : "pointer", transition: "all 0.2s", userSelect: "none" }} onClick={() => !isCompleted && toggleSkill(skill)}>
+                                        <div style={{ width: 22, height: 22, borderRadius: "6px", border: `2px solid ${isChecked ? "#10B981" : "#D1D5DB"}`, background: isChecked ? "#10B981" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.2s" }}>
+                                          {isChecked && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                                        </div>
+                                        <span style={{ fontSize: "0.95rem", fontWeight: 600, color: isChecked ? "#065F46" : "#111827", textDecoration: isChecked ? "line-through" : "none", transition: "all 0.2s" }}>{skill}</span>
+                                      </label>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
 
                             {/* Curated Video Courses */}
                             {m.resources && m.resources.length > 0 && (
@@ -869,20 +923,35 @@ export default function Dashboard() {
                           </div>
 
                           {/* Bottom Challenge Section */}
-                          <div style={{ background: "#F9FAFB", padding: "24px 32px", borderTop: "1px solid #E5E7EB", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+                          <div style={{ background: isCompleted ? "#F0FDF4" : "#F9FAFB", padding: "24px 32px", borderTop: `1px solid ${isCompleted ? "#BBF7D0" : "#E5E7EB"}`, display: "flex", justifyContent: "space-between", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
                             <div style={{ flex: 1, minWidth: "200px" }}>
-                              <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>Challenge to Unlock Level {idx + 2}</div>
+                              <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>
+                                {isCompleted ? "Stage Complete!" : `Challenge to Unlock Level ${idx + 2}`}
+                              </div>
                               <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "12px" }}>
-                                <span style={{ fontSize: "1rem", fontWeight: 700, color: "#111827" }}>Build a {m.title.split(' ')[0] || 'Core'} Project</span>
-                                <span style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600 }}>0/5</span>
+                                <span style={{ fontSize: "1rem", fontWeight: 700, color: "#111827" }}>
+                                  {isCompleted ? `All ${allSkills.length} skills mastered` : `Master ${allSkills.length} skills`}
+                                </span>
+                                <span style={{ fontSize: "0.85rem", color: isCompleted ? "#059669" : "#6B7280", fontWeight: 600 }}>{checkedCount}/{allSkills.length}</span>
                               </div>
                               <div style={{ width: "100%", maxWidth: "240px", height: "6px", background: "#E5E7EB", borderRadius: "4px", overflow: "hidden" }}>
-                                <div style={{ width: isActive ? "20%" : "0%", height: "100%", background: color, borderRadius: "4px" }} />
+                                <div style={{ width: `${progressPercent}%`, height: "100%", background: isCompleted ? "#10B981" : "#3B82F6", borderRadius: "4px", transition: "width 0.4s ease" }} />
                               </div>
                             </div>
-                            <button style={{ background: isActive ? "#111827" : "#E5E7EB", color: isActive ? "#fff" : "#9CA3AF", border: "none", padding: "12px 24px", borderRadius: "24px", fontWeight: 700, fontSize: "0.95rem", cursor: isActive ? "pointer" : "not-allowed", transition: "transform 0.2s" }} onMouseOver={(e) => isActive && (e.currentTarget.style.transform = "scale(1.05)")} onMouseOut={(e) => isActive && (e.currentTarget.style.transform = "scale(1)")}>
-                              {isActive ? "Start Challenge" : "Locked"}
-                            </button>
+                            
+                            {isCompleted ? (
+                              <div style={{ background: "#10B981", color: "#fff", padding: "12px 24px", borderRadius: "24px", fontWeight: 700, fontSize: "0.95rem", display: "flex", alignItems: "center", gap: "8px" }}>
+                                <CheckCircle2 size={18} /> Finished
+                              </div>
+                            ) : isStarted ? (
+                              <button onClick={handleComplete} disabled={!allChecked} style={{ background: allChecked ? "#10B981" : "#E5E7EB", color: allChecked ? "#fff" : "#9CA3AF", border: "none", padding: "12px 24px", borderRadius: "24px", fontWeight: 700, fontSize: "0.95rem", cursor: allChecked ? "pointer" : "not-allowed", transition: "all 0.2s", display: "flex", alignItems: "center", gap: "8px" }} onMouseOver={(e) => allChecked && (e.currentTarget.style.transform = "scale(1.05)")} onMouseOut={(e) => allChecked && (e.currentTarget.style.transform = "scale(1)")}>
+                                <CheckCircle2 size={18} /> {allChecked ? "Complete Stage" : "Check all skills"}
+                              </button>
+                            ) : (
+                              <button onClick={() => isUnlocked && setStartedStage(idx)} style={{ background: isUnlocked ? "#111827" : "#E5E7EB", color: isUnlocked ? "#fff" : "#9CA3AF", border: "none", padding: "12px 24px", borderRadius: "24px", fontWeight: 700, fontSize: "0.95rem", cursor: isUnlocked ? "pointer" : "not-allowed", transition: "transform 0.2s" }} onMouseOver={(e) => isUnlocked && (e.currentTarget.style.transform = "scale(1.05)")} onMouseOut={(e) => isUnlocked && (e.currentTarget.style.transform = "scale(1)")}>
+                                {isUnlocked ? "Start Challenge" : "🔒 Locked"}
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
