@@ -277,8 +277,10 @@ export default function Dashboard() {
     <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
       {/* Sidebar */}
       <aside style={{ width: "260px", position: "relative", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB", zIndex: 10 }}>
-        <DitherGradient colorFrom="#FAFAFA" colorTo="#FAFAFA" colorMid="#FAFAFA" intensity={0.08} speed={0} className="absolute inset-0 z-0" />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(255, 255, 255, 0.2)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", zIndex: 0 }} />
+        <div style={{ position: "absolute", inset: 0, zIndex: 0, overflow: "hidden", opacity: 0.8 }}>
+          <DitherGradient colorFrom="#F9FAFB" colorTo="#E5E7EB" colorMid="#F3F4F6" intensity={0.5} speed={1} className="w-full h-full" />
+        </div>
+        <div style={{ position: "absolute", inset: 0, background: "rgba(255, 255, 255, 0.4)", zIndex: 0 }} />
         
         {/* Logo Area */}
         <div style={{ position: "relative", height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent", zIndex: 1 }}>
