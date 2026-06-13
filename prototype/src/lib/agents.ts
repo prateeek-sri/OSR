@@ -55,7 +55,7 @@ export async function runProfileAnalysisAgent(
   state: GlobalState
 ): Promise<GlobalState> {
   // 🚀 FAST & FREE HEURISTIC (No Gemini API needed for this step anymore)
-  const technical_proficiency: Record<string, { score: number; evidence: string[]; category: string }> = {};
+  const technical_proficiency: TechnicalProficiency = {};
   let totalBytes = 0;
   
   Object.values(state.raw_github_metadata.languages).forEach(b => totalBytes += b);
@@ -83,13 +83,13 @@ export async function runProfileAnalysisAgent(
   const allDeps = new Set<string>();
   state.raw_github_metadata.repositories.forEach(r => r.dependencies?.forEach(d => allDeps.add(d)));
   
-  const knownFrameworks: Record<string, string> = {
-    react: "Frontend",
-    "next": "Full-Stack",
-    express: "Backend",
-    mongoose: "Database",
-    tailwindcss: "CSS Framework",
-    jest: "Testing"
+  const knownFrameworks: Record<string, "language" | "framework" | "tool" | "concept"> = {
+    react: "framework",
+    "next": "framework",
+    express: "framework",
+    mongoose: "tool",
+    tailwindcss: "tool",
+    jest: "tool"
   };
 
   allDeps.forEach(dep => {
@@ -236,7 +236,8 @@ export async function runMatchmakerAgent(
       // Calculate a pseudo compatibility score based on labels and title matching
       let score = 75; 
       if (labels.some(l => searchKeywords.includes(l.toLowerCase()))) score += 10;
-      if (typeof raw.title === "string" && searchKeywords.some(k => raw.title.toLowerCase().includes(k))) score += 10;
+      const title = raw.title as string;
+      if (title && searchKeywords.some(k => title.toLowerCase().includes(k))) score += 10;
 
       allIssues.push({
         id: raw.id as number,

@@ -401,7 +401,7 @@ export default function Dashboard() {
             )}
 
             {/* ═══ SKELETON LOADER ═══ */}
-      {view !== "landing" && isRunning && (
+      {isRunning && (
         <div className="fade-in" style={{ padding: "24px 0", width: "100%", display: "flex", flexDirection: "column", gap: "24px", opacity: 0.7 }}>
           <div className="skeleton-pulse" style={{ height: "140px", borderRadius: "16px", background: "var(--bg-elevated)" }} />
           <div style={{ display: "flex", gap: "24px", flexDirection: "row", flexWrap: "wrap" }}>
