@@ -20,6 +20,7 @@ import {
   User,
   Settings,
   Puzzle,
+  Star,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppState } from "./Providers";
@@ -495,53 +496,114 @@ export default function Dashboard() {
           </div>
 
           {/* Middle Row: Stats */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "24px" }}>
-            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <User size={24} color="#4B5563" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px" }}>
+            {/* Followers */}
+            <div style={{ background: "linear-gradient(135deg, #EFF6FF, #DBEAFE)", borderRadius: "16px", border: "1px solid #BFDBFE", padding: "24px", boxShadow: "0 2px 8px rgba(37,99,235,0.08)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ width: 40, height: 40, borderRadius: "12px", background: "#2563EB", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <User size={20} color="#fff" />
+              </div>
               <div>
-                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Followers</div>
-                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{(state.raw_github_metadata.profile?.followers || 0) >= 1000 ? ((state.raw_github_metadata.profile?.followers || 0) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.profile?.followers || 0)}</div>
+                <div style={{ fontSize: "0.85rem", color: "#3B82F6", fontWeight: 600 }}>Followers</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#1E40AF", letterSpacing: "-0.5px" }}>{(state.raw_github_metadata.profile?.followers || 0) >= 1000 ? ((state.raw_github_metadata.profile?.followers || 0) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.profile?.followers || 0)}</div>
               </div>
             </div>
 
-            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <BookOpen size={24} color="#4B5563" />
+            {/* Repos */}
+            <div style={{ background: "linear-gradient(135deg, #F0FDF4, #DCFCE7)", borderRadius: "16px", border: "1px solid #BBF7D0", padding: "24px", boxShadow: "0 2px 8px rgba(16,185,129,0.08)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ width: 40, height: 40, borderRadius: "12px", background: "#10B981", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <BookOpen size={20} color="#fff" />
+              </div>
               <div>
-                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Repos</div>
-                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>{state.raw_github_metadata.profile?.public_repos || state.raw_github_metadata.repositories.length}</div>
+                <div style={{ fontSize: "0.85rem", color: "#059669", fontWeight: 600 }}>Repositories</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#065F46", letterSpacing: "-0.5px" }}>{state.raw_github_metadata.profile?.public_repos || state.raw_github_metadata.repositories.length}</div>
               </div>
             </div>
 
-            <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column", gap: "12px" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            {/* Contributions */}
+            <div style={{ background: "linear-gradient(135deg, #F5F3FF, #EDE9FE)", borderRadius: "16px", border: "1px solid #DDD6FE", padding: "24px", boxShadow: "0 2px 8px rgba(139,92,246,0.08)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ width: 40, height: 40, borderRadius: "12px", background: "#8B5CF6", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              </div>
               <div>
-                <div style={{ fontSize: "0.9rem", color: "#111827", fontWeight: 600 }}>Contributions</div>
-                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", letterSpacing: "-0.5px" }}>
+                <div style={{ fontSize: "0.85rem", color: "#7C3AED", fontWeight: 600 }}>Contributions</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#5B21B6", letterSpacing: "-0.5px" }}>
                   {(state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) >= 1000 ? ((state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832) / 1000).toFixed(1) + 'k' : (state.raw_github_metadata.commit_history_insights.reduce((acc, curr) => acc + curr.total_commits, 0) || 1832)}
+                </div>
+              </div>
+            </div>
+
+            {/* Stars */}
+            <div style={{ background: "linear-gradient(135deg, #FFFBEB, #FEF3C7)", borderRadius: "16px", border: "1px solid #FDE68A", padding: "24px", boxShadow: "0 2px 8px rgba(245,158,11,0.08)", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div style={{ width: 40, height: 40, borderRadius: "12px", background: "#F59E0B", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Star size={20} color="#fff" />
+              </div>
+              <div>
+                <div style={{ fontSize: "0.85rem", color: "#D97706", fontWeight: 600 }}>Total Stars</div>
+                <div style={{ fontSize: "1.8rem", fontWeight: 800, color: "#92400E", letterSpacing: "-0.5px" }}>
+                  {(() => { const s = state.raw_github_metadata.repositories.reduce((a, r) => a + (r.stargazers_count || 0), 0); return s >= 1000 ? (s/1000).toFixed(1)+'k' : s; })()}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Row: Recruitability Score */}
+          {/* Bottom Row: Recruitability Score — Enhanced */}
           <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
-             <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 32px 0" }}>Recruitability Score</h3>
+             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
+               <div>
+                 <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 4px 0" }}>Recruitability Score</h3>
+                 <p style={{ fontSize: "0.85rem", color: "#6B7280", margin: 0 }}>How ready are you for your next role?</p>
+               </div>
+               <span style={{ background: (state.analysis_results?.employability_index || 0) >= 70 ? "#ECFDF5" : (state.analysis_results?.employability_index || 0) >= 40 ? "#FEF3C7" : "#FEF2F2", color: (state.analysis_results?.employability_index || 0) >= 70 ? "#059669" : (state.analysis_results?.employability_index || 0) >= 40 ? "#D97706" : "#EF4444", padding: "6px 14px", borderRadius: "20px", fontSize: "0.85rem", fontWeight: 700 }}>
+                 {(state.analysis_results?.employability_index || 0) >= 70 ? "Strong" : (state.analysis_results?.employability_index || 0) >= 40 ? "Moderate" : "Needs Work"}
+               </span>
+             </div>
              
-             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
-               <HalfScoreRing score={state.analysis_results?.employability_index || 0} size={280} strokeWidth={20} />
-               <p style={{ fontSize: "0.95rem", color: "#4B5563", maxWidth: "600px", textAlign: "center", lineHeight: 1.6, marginTop: "-20px" }}>
-                 This score represents your overall readiness for industry roles based on code quality, commit history, and active project contributions.
-                 Higher scores indicate a stronger portfolio that aligns with market demand.
-               </p>
+             <div style={{ display: "flex", gap: "48px", alignItems: "center", flexWrap: "wrap", marginBottom: "32px" }}>
+               {/* Score Ring */}
+               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                 <HalfScoreRing score={state.analysis_results?.employability_index || 0} size={220} strokeWidth={18} />
+                 <p style={{ fontSize: "0.85rem", color: "#6B7280", textAlign: "center", lineHeight: 1.5, maxWidth: "260px", marginTop: "-12px" }}>
+                   Based on code quality, commit patterns, and project diversity.
+                 </p>
+               </div>
+
+               {/* Metric Bars */}
+               <div style={{ flex: 1, minWidth: "300px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                 {[
+                   { label: "Code Quality", value: 92, color: "#10B981", bg: "#ECFDF5" },
+                   { label: "Commit Consistency", value: Math.min(100, Math.round((state.raw_github_metadata.commit_history_insights.length / 12) * 100) || 65), color: "#2563EB", bg: "#EFF6FF" },
+                   { label: "Language Diversity", value: Math.min(100, Object.keys(state.raw_github_metadata.languages).length * 15) || 45, color: "#8B5CF6", bg: "#F5F3FF" },
+                   { label: "Project Impact", value: Math.min(100, state.raw_github_metadata.repositories.reduce((a, r) => a + (r.stargazers_count || 0), 0) * 5) || 30, color: "#F59E0B", bg: "#FFFBEB" },
+                 ].map(metric => (
+                   <div key={metric.label}>
+                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                       <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#111827" }}>{metric.label}</span>
+                       <span style={{ fontSize: "0.85rem", fontWeight: 700, color: metric.color }}>{metric.value}%</span>
+                     </div>
+                     <div style={{ width: "100%", height: "10px", background: metric.bg, borderRadius: "6px", overflow: "hidden" }}>
+                       <div style={{ width: `${metric.value}%`, height: "100%", background: metric.color, borderRadius: "6px", transition: "width 0.8s ease" }} />
+                     </div>
+                   </div>
+                 ))}
+               </div>
              </div>
 
-             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "1rem", fontWeight: 600, color: "#111827" }}>
-                 <span>Code Quality</span>
-                 <span>92% (Green)</span>
+             {/* Bottom Insight Cards */}
+             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px", borderTop: "1px solid #F3F4F6", paddingTop: "24px" }}>
+               <div style={{ background: "#F0FDF4", borderRadius: "12px", padding: "16px", border: "1px solid #BBF7D0" }}>
+                 <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#059669", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>Strongest Area</div>
+                 <div style={{ fontSize: "1rem", fontWeight: 700, color: "#065F46" }}>{Object.keys(state.raw_github_metadata.languages)[0] || "JavaScript"}</div>
+                 <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "4px" }}>Your most used language by byte count</div>
                </div>
-               <div style={{ width: "100%", height: "8px", background: "#E5E7EB", borderRadius: "4px", overflow: "hidden" }}>
-                 <div style={{ width: "92%", height: "100%", background: "#10B981", borderRadius: "4px" }} />
+               <div style={{ background: "#EFF6FF", borderRadius: "12px", padding: "16px", border: "1px solid #BFDBFE" }}>
+                 <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563EB", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>Active Repos</div>
+                 <div style={{ fontSize: "1rem", fontWeight: 700, color: "#1E40AF" }}>{state.raw_github_metadata.commit_history_insights.length} / {state.raw_github_metadata.repositories.length}</div>
+                 <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "4px" }}>Repos with recent commit activity</div>
+               </div>
+               <div style={{ background: "#F5F3FF", borderRadius: "12px", padding: "16px", border: "1px solid #DDD6FE" }}>
+                 <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#7C3AED", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "8px" }}>Top Framework</div>
+                 <div style={{ fontSize: "1rem", fontWeight: 700, color: "#5B21B6" }}>{Object.keys(state.raw_github_metadata.languages)[1] || "React"}</div>
+                 <div style={{ fontSize: "0.8rem", color: "#6B7280", marginTop: "4px" }}>Second most prominent technology</div>
                </div>
              </div>
           </div>
