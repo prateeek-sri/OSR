@@ -25,6 +25,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useAppState } from "./Providers";
 import type { GlobalState, PipelineStep } from "@/lib/types";
+import HeroGeometric from "./HeroGeometric";
 
 const NAV_STEPS = [
   { id: "skills", label: "Profile" },
@@ -272,9 +273,20 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", background: "var(--bg-primary)" }}>
+    <div style={{ display: "flex", height: "100vh", width: "100vw", overflow: "hidden", position: "relative" }}>
+      <div style={{ position: "absolute", zIndex: 0, inset: 0 }}>
+        <HeroGeometric 
+          title1="Elevate"
+          title2="Your Brand"
+          description="Scale your product with clarity, precision, and motion-led design."
+          color1="#3B82F6"
+          color2="#F0F9FF"
+          speed={1}
+        />
+      </div>
+
       {/* Sidebar */}
-      <aside style={{ width: "260px", background: "#FAFAFA", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid #E5E7EB" }}>
+      <aside style={{ width: "260px", background: "rgba(255, 255, 255, 0.3)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", display: "flex", flexDirection: "column", flexShrink: 0, borderRight: "1px solid rgba(255, 255, 255, 0.5)", zIndex: 10 }}>
         {/* Logo Area */}
         <div style={{ height: "64px", display: "flex", alignItems: "center", padding: "0 24px", color: "#111827", borderBottom: "1px solid transparent" }}>
           <div onClick={() => window.location.href = '/'} style={{ cursor: "pointer", fontWeight: 800, fontSize: "1.4rem", display: "flex", alignItems: "center", gap: "8px", letterSpacing: "-0.5px" }}>
@@ -285,7 +297,7 @@ export default function Dashboard() {
 
         {/* Setup Progress Widget */}
         <div style={{ padding: "16px 20px", marginBottom: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", border: "1px solid #E5E7EB", background: "#fff", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "10px", border: "1px solid #E5E7EB", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", boxShadow: "0 1px 2px rgba(0,0,0,0.02)" }}>
              <div style={{ width: "28px", height: "28px", borderRadius: "50%", border: "2px solid #8B5CF6", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.85rem", fontWeight: 700, color: "#8B5CF6" }}>
                {state?.dynamic_roadmap ? "4" : state?.remediation_strategy ? "3" : state ? "2" : "1"}
              </div>
@@ -315,10 +327,10 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Column */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "#fff" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "transparent", zIndex: 10 }}>
         
         {/* Top Header */}
-        <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "#fff", borderBottom: "1px solid #E5E7EB", zIndex: 10, flexShrink: 0 }}>
+        <header style={{ height: "64px", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0 32px", background: "rgba(255, 255, 255, 0.3)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255, 255, 255, 0.4)", zIndex: 10, flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", flex: 1 }}>
             {/* Search removed as requested */}
           </div>
@@ -331,7 +343,7 @@ export default function Dashboard() {
               <div ref={dropdownRef} style={{ width: 32, height: 32, borderRadius: 8, background: "#8B5CF6", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", position: "relative" }} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 {session.user?.image ? <img src={session.user.image} style={{width: '100%', height: '100%', borderRadius: 8, objectFit: 'cover'}}/> : (session.user?.name?.charAt(0) || "U")}
                 {isDropdownOpen && (
-                  <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "#fff", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: "1px solid #E5E7EB", overflow: "hidden", minWidth: "160px", zIndex: 100 }}>
+                  <div style={{ position: "absolute", top: "100%", right: 0, marginTop: "8px", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "8px", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: "1px solid #E5E7EB", overflow: "hidden", minWidth: "160px", zIndex: 100 }}>
                     <button onClick={(e) => { e.stopPropagation(); setView("skills"); setIsDropdownOpen(false); router.push('/profile'); }} style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: "8px", background: "transparent", border: "none", borderBottom: "1px solid #E5E7EB", cursor: "pointer", fontSize: "0.9rem", color: "#111827", textAlign: "left" }} onMouseOver={(e) => e.currentTarget.style.background = "#F3F4F6"} onMouseOut={(e) => e.currentTarget.style.background = "transparent"}>
                       <User size={16} /> Profile
                     </button>
@@ -422,7 +434,7 @@ export default function Dashboard() {
             <>
               {/* Open Source Matchmaker Loader */}
               {[1, 2, 3].map(i => (
-                <div key={i} className="skeleton-pulse" style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
+                <div key={i} className="skeleton-pulse" style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
                   <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "12px" }}>
                     <div className="skeleton-pulse" style={{ height: "28px", width: "60%", borderRadius: "8px", background: "#E5E7EB" }} />
                     <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
@@ -450,7 +462,7 @@ export default function Dashboard() {
           <div style={{ display: "flex", gap: "24px", flexWrap: "wrap" }}>
             
             {/* User Profile Card */}
-            <div style={{ flex: "1 1 400px", background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", alignItems: "center", gap: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+            <div style={{ flex: "1 1 400px", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", alignItems: "center", gap: "24px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
               {state.raw_github_metadata.profile?.avatar_url ? (
                 <img src={state.raw_github_metadata.profile.avatar_url} style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover" }} alt="Avatar" />
               ) : (
@@ -474,7 +486,7 @@ export default function Dashboard() {
             </div>
 
             {/* Language Breakdown Card */}
-            <div style={{ flex: "1 1 400px", background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+            <div style={{ flex: "1 1 400px", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", flexDirection: "column", justifyContent: "center", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
               <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 24px 0" }}>Language Breakdown</h3>
               
               <div style={{ display: "flex", gap: "12px", width: "100%" }}>
@@ -554,7 +566,7 @@ export default function Dashboard() {
           </div>
 
           {/* Bottom Row: Recruitability Score — Enhanced */}
-          <div style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+          <div style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "32px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "32px" }}>
                <div>
                  <h3 style={{ fontSize: "1.2rem", fontWeight: 700, color: "#111827", margin: "0 0 4px 0" }}>Recruitability Score</h3>
@@ -616,7 +628,7 @@ export default function Dashboard() {
           </div>
 
           {/* Gap Finder Form - Smaller and professional */}
-          <div style={{ background: "#fff", border: "1px solid #E5E7EB", borderRadius: "12px", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+          <div style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid #E5E7EB", borderRadius: "12px", padding: "20px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
              <div>
                <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", margin: "0 0 4px 0", display: "flex", alignItems: "center", gap: "8px" }}>
                  <Target size={18} color="#2563EB" /> Find your gaps
@@ -654,7 +666,7 @@ export default function Dashboard() {
         <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: "32px", maxWidth: "100%", width: "100%", margin: "0 auto", paddingBottom: "48px" }}>
           
           {/* Header Action Bar */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "24px 32px", borderBottom: "1px solid #E5E7EB", borderRadius: "0 0 16px 16px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", padding: "24px 32px", borderBottom: "1px solid #E5E7EB", borderRadius: "0 0 16px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "#ECFDF5", padding: "6px 12px", borderRadius: "16px" }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981" }} />
@@ -684,7 +696,7 @@ export default function Dashboard() {
                 .sort((a, b) => b[1].score - a[1].score)
                 .slice(0, 4)
                 .map(([name, data], idx) => (
-                   <div key={`str-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #10B981", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                   <div key={`str-${idx}`} style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "12px", border: "1px solid #10B981", padding: "20px", display: "flex", flexDirection: "column", gap: "12px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                          <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#10B981", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>
                            <CheckCircle2 size={16} />
@@ -707,7 +719,7 @@ export default function Dashboard() {
                  
                  if (isPriority) {
                    return (
-                     <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E5E7EB", display: "flex", flexDirection: "column", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden" }}>
+                     <div key={`gap-${idx}`} style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "12px", border: "1px solid #E5E7EB", display: "flex", flexDirection: "column", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", overflow: "hidden" }}>
                        <div style={{ display: "flex", alignItems: "flex-end", borderBottom: "4px solid #529490" }}>
                           <div style={{ background: "#529490", padding: "8px 24px 8px 16px", color: "#fff", fontSize: "0.85rem", fontWeight: 600, clipPath: "polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%)" }}>
                             Priority Gap
@@ -733,7 +745,7 @@ export default function Dashboard() {
                  const marketPercent = marketLevelNum >= 5 ? 85 : 65;
 
                  return (
-                   <div key={`gap-${idx}`} style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px", display: "flex", flexDirection: "column", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
+                   <div key={`gap-${idx}`} style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "20px", display: "flex", flexDirection: "column", gap: "16px", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                            <div style={{ width: "32px", height: "32px", borderRadius: "8px", background: "#E0F2F1", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -783,7 +795,7 @@ export default function Dashboard() {
         <div className="fade-in" style={{ width: "100%", maxWidth: "1200px" }}>
           {state.dynamic_roadmap.milestones.length > 0 ? (
             <div className="premium-container fade-in" style={{ marginBottom: 32, padding: "24px", background: "var(--bg-primary)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "24px 32px", borderRadius: "16px", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", marginBottom: "32px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", padding: "24px 32px", borderRadius: "16px", border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)", marginBottom: "32px" }}>
                 <div>
                   <h3 style={{ fontSize: "1.5rem", fontWeight: 700, margin: "0 0 8px 0", color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "12px" }}>
                     <Map size={24} color="#3B82F6" /> Career Pipeline Flowchart
@@ -799,7 +811,7 @@ export default function Dashboard() {
               </div>
               
               {state.dynamic_roadmap.overall_learning_summary && (
-                <div style={{ marginBottom: 32, padding: "20px", background: "#fff", borderRadius: "12px", borderLeft: "4px solid #3B82F6", borderTop: "1px solid var(--border)", borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
+                <div style={{ marginBottom: 32, padding: "20px", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "12px", borderLeft: "4px solid #3B82F6", borderTop: "1px solid var(--border)", borderRight: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
                   <p style={{ fontSize: "0.95rem", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
                     {state.dynamic_roadmap.overall_learning_summary}
                   </p>
@@ -858,7 +870,7 @@ export default function Dashboard() {
                         </div>
                         
                         {/* Main Card */}
-                        <div style={{ background: "#fff", borderRadius: "20px", border: `1px solid ${isCompleted ? "#BBF7D0" : isStarted ? "#BFDBFE" : "#E5E7EB"}`, boxShadow: isStarted ? "0 4px 20px rgba(59,130,246,0.08)" : "0 4px 20px rgba(0,0,0,0.04)", overflow: "hidden", transition: "all 0.3s" }}>
+                        <div style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "20px", border: `1px solid ${isCompleted ? "#BBF7D0" : isStarted ? "#BFDBFE" : "#E5E7EB"}`, boxShadow: isStarted ? "0 4px 20px rgba(59,130,246,0.08)" : "0 4px 20px rgba(0,0,0,0.04)", overflow: "hidden", transition: "all 0.3s" }}>
                           
                           <div style={{ padding: "32px" }}>
                             <div style={{ fontSize: "0.85rem", color: "#6B7280", fontWeight: 600, marginBottom: "8px" }}>Stage {idx + 1}: Foundations</div>
@@ -923,7 +935,7 @@ export default function Dashboard() {
                                         <div style={{ width: "100%", aspectRatio: "16/9", borderRadius: "12px", background: "#000", position: "relative", overflow: "hidden" }}>
                                           <img src={bgUrl} onError={(e) => { e.currentTarget.src = fallbackBg; }} style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.8 }} alt={res.title} />
                                           <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
+                                            <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}>
                                               <svg width="16" height="16" viewBox="0 0 24 24" fill="#111827"><path d="M5 3l14 9-14 9V3z"/></svg>
                                             </div>
                                           </div>
@@ -1022,7 +1034,7 @@ export default function Dashboard() {
             <h4 style={{ marginBottom: 8, fontSize: "0.9rem", color: "#111827" }}>Search Projects</h4>
             <div style={{ display: "flex", gap: 12 }}>
               <div className="input-group" style={{ flex: 1 }}>
-                <input className="input-field" style={{ background: "#fff", borderColor: "#E5E7EB", width: "100%", padding: "12px 16px", borderRadius: "8px", border: "1px solid #E5E7EB", outline: "none" }} placeholder={`Search for ${Object.keys(state.raw_github_metadata.languages)[0] || 'projects'}...`} />
+                <input className="input-field" style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderColor: "#E5E7EB", width: "100%", padding: "12px 16px", borderRadius: "8px", border: "1px solid #E5E7EB", outline: "none" }} placeholder={`Search for ${Object.keys(state.raw_github_metadata.languages)[0] || 'projects'}...`} />
               </div>
               <button className="btn-secondary" style={{ background: "#F3F4F6", color: "#111827", border: "none", padding: "0 24px", borderRadius: "8px", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "8px" }}><Search size={16} /> Search</button>
             </div>
@@ -1035,7 +1047,7 @@ export default function Dashboard() {
             {osLoading ? (
               <>
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="skeleton-pulse fade-in" style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
+                  <div key={i} className="skeleton-pulse fade-in" style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", opacity: 0.7 }}>
                     <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center", gap: "12px" }}>
                       <div className="skeleton-pulse" style={{ height: "28px", width: "60%", borderRadius: "8px", background: "#E5E7EB" }} />
                       <div className="skeleton-pulse" style={{ height: "60px", width: "100%", borderRadius: "8px", background: "#E5E7EB" }} />
@@ -1072,7 +1084,7 @@ export default function Dashboard() {
                 const suggestedDesc = suggestedDescriptions[idx % suggestedDescriptions.length];
                 
                 return (
-                  <div key={repo.id} style={{ background: "#fff", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", flexDirection: "row", flexWrap: "wrap" }}>
+                  <div key={repo.id} style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "16px", border: "1px solid #E5E7EB", padding: "24px", display: "flex", gap: "24px", alignItems: "stretch", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", flexDirection: "row", flexWrap: "wrap" }}>
                     
                     {/* Left Side: Repo Info & Stats */}
                     <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -1143,7 +1155,7 @@ export default function Dashboard() {
       {/* ═══ LOGIN MODAL (Brilliant Style) ═══ */}
       {isLoginModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(2px)" }} onClick={() => setIsLoginModalOpen(false)}>
-          <div style={{ background: "#fff", width: "90%", maxWidth: "440px", borderRadius: "16px", padding: "72px 40px 64px 40px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", width: "90%", maxWidth: "440px", borderRadius: "16px", padding: "72px 40px 64px 40px", display: "flex", flexDirection: "column", alignItems: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
             
             <BrilliantLogo />
 
@@ -1190,7 +1202,7 @@ function BrilliantLogo() {
   return (
     <div style={{ width: "96px", height: "96px", position: "relative", marginBottom: "32px" }}>
       <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", background: "#10B981", borderRadius: "32px", transform: "rotate(-15deg)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ width: "40px", height: "40px", background: "#fff", borderRadius: "12px", transform: "rotate(15deg)", position: "relative" }}>
+        <div style={{ width: "40px", height: "40px", background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRadius: "12px", transform: "rotate(15deg)", position: "relative" }}>
            <div ref={dotRef} style={{ position: "absolute", top: 12, left: 12, width: 16, height: 16, background: "#111", borderRadius: 4, transition: "transform 0.1s ease-out" }} />
         </div>
       </div>

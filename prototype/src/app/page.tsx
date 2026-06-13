@@ -189,21 +189,10 @@ export default function Home() {
             <div style={{ display: "flex", gap: "80px", flexWrap: "wrap" }}>
                <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                  <div style={{ fontWeight: 700, fontSize: "1rem", color: "#111", marginBottom: "8px" }}>Product</div>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Roadmaps</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Open Source</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Gap Analysis</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Profile</a>
-               </div>
-               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                 <div style={{ fontWeight: 700, fontSize: "1rem", color: "#111", marginBottom: "8px" }}>Connect</div>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>GitHub</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>X (Twitter)</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Discord</a>
-               </div>
-               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                 <div style={{ fontWeight: 700, fontSize: "1rem", color: "#111", marginBottom: "8px" }}>Legal</div>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Privacy Policy</a>
-                 <a href="#" style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Terms of Service</a>
+                 <a href="#" onClick={(e) => { e.preventDefault(); setView("roadmap"); router.push("/dashboard"); }} style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Roadmaps</a>
+                 <a href="#" onClick={(e) => { e.preventDefault(); setView("opensource"); router.push("/dashboard"); }} style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Open Source</a>
+                 <a href="#" onClick={(e) => { e.preventDefault(); setView("overview"); router.push("/dashboard"); }} style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Gap Analysis</a>
+                 <a href="#" onClick={(e) => { e.preventDefault(); setView("skills"); router.push("/dashboard"); }} style={{ color: "#666", textDecoration: "none", fontSize: "0.95rem", fontWeight: 500, transition: "color 0.2s" }} onMouseOver={e=>e.currentTarget.style.color="#111"} onMouseOut={e=>e.currentTarget.style.color="#666"}>Profile</a>
                </div>
             </div>
          </div>
